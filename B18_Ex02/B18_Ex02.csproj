@@ -39,7 +39,10 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Main.cs" />
+    <Compile Include="Board.cs" />
+    <Compile Include="CheckersGame.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Square.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
