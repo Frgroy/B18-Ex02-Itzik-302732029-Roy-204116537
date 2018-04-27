@@ -8,6 +8,6 @@ namespace B18_Ex02
 {
      class Main
      {
-
+          int itzik = 10;
      }
 }
