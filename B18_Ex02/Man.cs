@@ -13,6 +13,11 @@ namespace B18_Ex02
           public bool m_isKing;
           public Team.eDirectionOfMovement m_directionOfMovement;
           
+
+          public Man()
+          {
+
+          }
           public Man(Square position, Team manTeam, Team.eDirectionOfMovement dir)
           {
                m_currentPosition = position;

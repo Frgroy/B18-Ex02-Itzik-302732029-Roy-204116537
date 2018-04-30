@@ -43,7 +43,10 @@ namespace B18_Ex02
           public void ManageDuelTurn()
           {
                ManagePlayerTurn(player1);
+               activeBoard.PrintBoard();
                ManagePlayerTurn(player2);
+               activeBoard.PrintBoard();
+
           }
 
           public void ManagePlayerTurn(Team player)
@@ -74,24 +77,23 @@ namespace B18_Ex02
                Console.WriteLine("LOO TOOVVVV!!!"); //todo UI class
           }
 
-
           public bool HandleUserRequestToMove(string userInput, Team player)
           {
                bool IsHandledMove = false;
                Square sourceSquare = new Square();
                Square destinationSquare = new Square();
-               ConvertUserInputToMove(userInput, sourceSquare, destinationSquare);
+               ConvertUserInputToMove(userInput, ref sourceSquare,  ref destinationSquare);
 
                if (IsSourceLegal(player, sourceSquare))
                {
                     if (IsSquarePositionInBoardRange(destinationSquare.squarePosition) && destinationSquare.m_man == null)
                     {
-                         if (IsManMoving(sourceSquare, destinationSquare))
+                         if (IsManMoving(ref sourceSquare,ref destinationSquare))
                          {
                               IsHandledMove = true;
                          }
 
-                         else if (IsManEating(sourceSquare, destinationSquare))
+                         else if (IsManEating(ref sourceSquare,ref destinationSquare))
                          {
                               IsHandledMove = true;
                          }
@@ -101,7 +103,7 @@ namespace B18_Ex02
                return IsHandledMove;
           }
 
-          public bool IsManMoving(Square sourceSquare, Square destinationSquare)
+          public bool IsManMoving(ref Square sourceSquare, ref Square destinationSquare)
           {
                bool isManMoved = false;
                if (sourceSquare.m_man.m_directionOfMovement == Team.eDirectionOfMovement.up) // to do or to king
@@ -109,13 +111,13 @@ namespace B18_Ex02
                     if (sourceSquare.squarePosition.x - 1 == destinationSquare.squarePosition.x &&
                          sourceSquare.squarePosition.y - 1 == destinationSquare.squarePosition.y)
                     {
-                         HandleManMove(sourceSquare, eDirectionType.upLeft);
+                         HandleManMove(ref sourceSquare, ref destinationSquare);
                          isManMoved = true;
                     }
                     else if (sourceSquare.squarePosition.x + 1 == destinationSquare.squarePosition.x &&
                          sourceSquare.squarePosition.y - 1 == destinationSquare.squarePosition.y)
                     {
-                         HandleManMove(sourceSquare, eDirectionType.upRight);
+                         HandleManMove(ref sourceSquare, ref destinationSquare);
                          isManMoved = true;
                     }
                }
@@ -125,7 +127,7 @@ namespace B18_Ex02
                     if (sourceSquare.squarePosition.x - 1 == destinationSquare.squarePosition.x &&
                          sourceSquare.squarePosition.y + 1 == destinationSquare.squarePosition.y)
                     {
-                         HandleManMove(sourceSquare, eDirectionType.downLeft);
+                         HandleManMove(ref sourceSquare, eDirectionType.downLeft);
                          isManMoved = true;
 
 
@@ -133,14 +135,14 @@ namespace B18_Ex02
                     else if (sourceSquare.squarePosition.x + 1 == destinationSquare.squarePosition.x &&
                          sourceSquare.squarePosition.y + 1 == destinationSquare.squarePosition.y)
                     {
-                         HandleManMove(sourceSquare, eDirectionType.downRight);
+                         HandleManMove(ref sourceSquare, ref destinationSquare);
                          isManMoved = true;
                     }
                }
                return isManMoved;
           }
 
-          public bool IsManEating(Square sourceSquare, Square destinationSquare)
+          public bool IsManEating(ref Square sourceSquare, ref Square destinationSquare)
           {
                bool isManAte = false;
                if (sourceSquare.m_man.m_directionOfMovement == Team.eDirectionOfMovement.up) // to do or to king
@@ -148,20 +150,20 @@ namespace B18_Ex02
                     if (sourceSquare.squarePosition.x - 2 == destinationSquare.squarePosition.x &&
                          sourceSquare.squarePosition.y - 2 == destinationSquare.squarePosition.y)
                     {
-                         if (activeBoard.gameBoard[destinationSquare.squarePosition.x + 1, destinationSquare.squarePosition.y + 1].m_man != null &&
-                              activeBoard.gameBoard[destinationSquare.squarePosition.x + 1, destinationSquare.squarePosition.y + 1].m_man.m_manTeam != sourceSquare.m_man.m_manTeam)
+                         if (activeBoard.gameBoard[destinationSquare.squarePosition.y + 1, destinationSquare.squarePosition.x + 1].m_man != null &&
+                              activeBoard.gameBoard[destinationSquare.squarePosition.y + 1, destinationSquare.squarePosition.x + 1].m_man.m_manTeam != sourceSquare.m_man.m_manTeam)
                          {
-                              HandleManEat(sourceSquare, destinationSquare, eDirectionType.upLeft);
+                              HandleManEat(ref sourceSquare, ref destinationSquare, eDirectionType.upLeft);
                               isManAte = true;
                          }
                     }
                     else if (sourceSquare.squarePosition.x + 2 == destinationSquare.squarePosition.x &&
                          sourceSquare.squarePosition.y - 2 == destinationSquare.squarePosition.y)
                     {
-                         if (activeBoard.gameBoard[destinationSquare.squarePosition.x - 1, destinationSquare.squarePosition.y + 1].m_man != null &&
-                              activeBoard.gameBoard[destinationSquare.squarePosition.x - 1, destinationSquare.squarePosition.y + 1].m_man.m_manTeam != sourceSquare.m_man.m_manTeam)
+                         if (activeBoard.gameBoard[destinationSquare.squarePosition.y + 1, destinationSquare.squarePosition.x - 1].m_man != null &&
+                              activeBoard.gameBoard[destinationSquare.squarePosition.y + 1, destinationSquare.squarePosition.x - 1].m_man.m_manTeam != sourceSquare.m_man.m_manTeam)
                          {
-                              HandleManEat(sourceSquare, destinationSquare, eDirectionType.upRight);
+                              HandleManEat(ref sourceSquare, ref destinationSquare, eDirectionType.upRight);
                               isManAte = true;
                          }
                     }
@@ -172,22 +174,20 @@ namespace B18_Ex02
                     if (sourceSquare.squarePosition.x - 2 == destinationSquare.squarePosition.x &&
                          sourceSquare.squarePosition.y + 2 == destinationSquare.squarePosition.y)
                     {
-                         if (activeBoard.gameBoard[destinationSquare.squarePosition.x + 1, destinationSquare.squarePosition.y - 1].m_man != null &&
-                              activeBoard.gameBoard[destinationSquare.squarePosition.x + 1, destinationSquare.squarePosition.y - 1].m_man.m_manTeam != sourceSquare.m_man.m_manTeam)
+                         if (activeBoard.gameBoard[destinationSquare.squarePosition.y - 1, destinationSquare.squarePosition.x + 1].m_man != null &&
+                              activeBoard.gameBoard[destinationSquare.squarePosition.y - 1, destinationSquare.squarePosition.x + 1].m_man.m_manTeam != sourceSquare.m_man.m_manTeam)
                          {
-                              HandleManEat(sourceSquare, destinationSquare, eDirectionType.downLeft);
+                              HandleManEat(ref sourceSquare, ref destinationSquare, eDirectionType.downLeft);
                               isManAte = true;
                          }
-
-
                     }
                     else if (sourceSquare.squarePosition.x + 2 == destinationSquare.squarePosition.x &&
                          sourceSquare.squarePosition.y + 2 == destinationSquare.squarePosition.y)
                     {
-                         if (activeBoard.gameBoard[destinationSquare.squarePosition.x - 1, destinationSquare.squarePosition.y - 1].m_man != null &&
-                              activeBoard.gameBoard[destinationSquare.squarePosition.x - 1, destinationSquare.squarePosition.y - 1].m_man.m_manTeam != sourceSquare.m_man.m_manTeam)
+                         if (activeBoard.gameBoard[destinationSquare.squarePosition.y - 1, destinationSquare.squarePosition.x - 1].m_man != null &&
+                              activeBoard.gameBoard[destinationSquare.squarePosition.y - 1, destinationSquare.squarePosition.x - 1].m_man.m_manTeam != sourceSquare.m_man.m_manTeam)
                          {
-                              HandleManEat(sourceSquare, destinationSquare, eDirectionType.downRight);
+                              HandleManEat(ref sourceSquare, ref destinationSquare, eDirectionType.downRight);
                               isManAte = true;
                          }
                     }
@@ -195,19 +195,46 @@ namespace B18_Ex02
                return isManAte;
           }
 
-          public void HandleManMove(Square sourceSquare, Square destinationSquare)
+          public void HandleManMove(ref Square sourceSquare, ref Square destinationSquare)
           {
                sourceSquare.m_man.Move(destinationSquare);
           }
-          public void HandleManMove(Square sourceSquare, eDirectionType directionType)
+
+          public void HandleManMove(ref Square sourceSquare, eDirectionType directionType)
           {
     
           }
 
-
-          public void HandleManEat(Square sourceSquare, Square destinationSquare, eDirectionType directionType)
+          public void HandleManEat(ref Square sourceSquare, ref Square destinationSquare, eDirectionType directionType)
           {
+               Man eatenMan = new Man();
+               findEatenMan(destinationSquare, directionType, ref eatenMan);
+               eatenMan.BeEaten();
                sourceSquare.m_man.Move(destinationSquare);
+          }
+
+          public void findEatenMan (Square destinationSquare, eDirectionType directionType, ref Man eatenMan)
+          {
+               if (directionType == eDirectionType.upRight)
+               {
+                    eatenMan = activeBoard.gameBoard[destinationSquare.squarePosition.y + 1, destinationSquare.squarePosition.x - 1].m_man;
+               }
+               else if (directionType == eDirectionType.upLeft)
+               {
+                    eatenMan = activeBoard.gameBoard[destinationSquare.squarePosition.y + 1, destinationSquare.squarePosition.x + 1].m_man;
+               }
+
+               else if (directionType == eDirectionType.downLeft)
+               {
+                    eatenMan = activeBoard.gameBoard[destinationSquare.squarePosition.y - 1, destinationSquare.squarePosition.x + 1].m_man;
+               }
+
+               else
+               {
+                    eatenMan = activeBoard.gameBoard[destinationSquare.squarePosition.y - 1, destinationSquare.squarePosition.x - 1].m_man;
+               }
+
+                         
           }
 
           public bool IsSourceLegal(Team player, Square squareSource)
@@ -222,9 +249,7 @@ namespace B18_Ex02
 
           public bool IsManIsInCompatibleTeam(Team manTeam, Square squarePosition)
           {
-
                return squarePosition.m_man != null && squarePosition.m_man.m_manTeam == manTeam ? true : false;
-
           }
 
           public bool IsManIsInOpponentTeam(Man man, Square squarePosition)
@@ -233,11 +258,11 @@ namespace B18_Ex02
 
           }
 
-          public void ConvertUserInputToMove(string userInput, Square squareSource, Square squareDestination)
+          public void ConvertUserInputToMove(string userInput, ref Square squareSource, ref Square squareDestination)
           {
-               string[] splittedInput = userInput.Split('>');
-               squareSource = activeBoard.gameBoard[(int)splittedInput[0][0] - 'A', (int)splittedInput[0][1] - 'a'];
-               squareDestination = activeBoard.gameBoard[(int)splittedInput[1][0] - 'A', (int)splittedInput[1][1] - 'a'];
+               string[] splittedInput = userInput.Split('>'); ////bug
+               squareSource = activeBoard.gameBoard[(int)splittedInput[0][1] - 'a', (int)splittedInput[0][0] - 'A'];
+               squareDestination = activeBoard.gameBoard[(int)splittedInput[1][1] - 'a', (int)splittedInput[1][0] - 'A'];
           }
 
           public void RunPreGameDialog()
