@@ -8,12 +8,16 @@ namespace B18_Ex02
 {
      public class Square
      {
+          public struct SquarePosition
+          {
+               public int x;
+               public int y;
+          }
           public Man m_man;
+          public SquarePosition squarePosition;
           private eSquareColor m_squareColor;
           // private eWidthLetter width;
           // private eLengthLetter length;
-          private int width;
-          private int length;
 
           public eSquareColor squareColor
           {
@@ -22,8 +26,8 @@ namespace B18_Ex02
 
           public void InitializeSquare(int i, int j) // to do casting 1??
           {
-               width = i;
-               length = j;
+               squarePosition.x = i;
+               squarePosition.y = j;
                if ((i + j) % 2 == 0)
                {
                     m_squareColor = eSquareColor.White;

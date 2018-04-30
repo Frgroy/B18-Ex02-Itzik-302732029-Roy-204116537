@@ -47,9 +47,9 @@ namespace B18_Ex02
                               System.Console.Write(" ");
                          }
 
-                         else if (gameBoard[i, j].m_man.m_manTeam == Team.eTeamSign.O)
+                         else if (gameBoard[i, j].m_man.m_manTeam.m_teamSign == Team.eTeamSign.O)
                          {
-                              System.Console.Write("O");
+                              System.Console.Write('O');
                          }
 
                          else

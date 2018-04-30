@@ -35,12 +35,12 @@ namespace B18_Ex02
                     gameStatus = eGameStatus.inRound; //to do change the name
                     while (gameStatus == eGameStatus.inRound)
                     {
-                         ManageRound();
+                         ManageDuelTurn();
                     }
                }
           }
 
-          public void ManageRound()
+          public void ManageDuelTurn()
           {
                ManagePlayerTurn(player1);
                ManagePlayerTurn(player2);
@@ -48,75 +48,196 @@ namespace B18_Ex02
 
           public void ManagePlayerTurn(Team player)
           {
-               HandlePlayerInput(System.Console.ReadLine(), player);
+               HandlePlayerInput(player);
                printInfo();
           }
 
-          public void HandlePlayerInput(string userInput, Team player) // to dodoododo
+          public void HandlePlayerInput(Team player) // to dodoododo
           {
-               //to do find function that checks template
-               int source_i = 0;
-               int source_j = 0;
-               int destination_i = 0;
-               int destination_j = 0;
-               ConvertInput(userInput, source_i, source_j, destination_i, destination_j);
-               while (!IsLegalMove(player, source_i, source_j, destination_i, destination_j))
+               string legalMovePattern = @"^[A-Z][a-z]>[A-Z][a-z]$";
+               string userInput = Console.ReadLine();
+               while (!Regex.IsMatch(userInput, legalMovePattern))
                {
-                    ManagePlayerTurn(player);
+                    IllegalInputMassage();
+                    userInput = Console.ReadLine();
                }
-               Move(source_i, source_j, destination_i, destination_j);
+
+               while (!HandleUserRequestToMove(userInput, player))
+               {
+                    IllegalInputMassage();
+                    userInput = Console.ReadLine();
+               }
           }
 
-          public bool IsLegalMove(Team player, int source_i, int source_j, int destination_i, int destination_j)
+          public void IllegalInputMassage()
           {
-               if (IsSourceLegal(player, source_i, source_j))
-               {
-                    if (IsDestinationLegal(activeBoard.gameBoard[source_i, source_j].m_man, destination_i, destination_j))
-                    {
-                         return true;
-                    }
-               }
-               return false;          
+               Console.WriteLine("LOO TOOVVVV!!!"); //todo UI class
           }
 
-          public bool IsSourceLegal(Team player, int source_i, int source_j) //format
+
+          public bool HandleUserRequestToMove(string userInput, Team player)
           {
-               if (source_i >= 0 && source_i < activeBoard.size && source_j >= 0 && source_j < activeBoard.size)
+               bool IsHandledMove = false;
+               Square sourceSquare = new Square();
+               Square destinationSquare = new Square();
+               ConvertUserInputToMove(userInput, sourceSquare, destinationSquare);
+
+               if (IsSourceLegal(player, sourceSquare))
                {
-                    if (activeBoard.gameBoard[source_i, source_j].m_man != null)
+                    if (IsSquarePositionInBoardRange(destinationSquare.squarePosition) && destinationSquare.m_man == null)
                     {
-                         if (activeBoard.gameBoard[source_i, source_j].m_man.m_manTeam == player.m_teamSign)
+                         if (IsManMoving(sourceSquare, destinationSquare))
                          {
-                              return true; //change return to end
+                              IsHandledMove = true;
+                         }
+
+                         else if (IsManEating(sourceSquare, destinationSquare))
+                         {
+                              IsHandledMove = true;
                          }
                     }
                }
-               return false;
+
+               return IsHandledMove;
           }
 
-          public bool IsDestinationLegal (Man man, int destination_i, int destination_j)
+          public bool IsManMoving(Square sourceSquare, Square destinationSquare)
           {
-               if (destination_i >= 0 && destination_i < activeBoard.size && destination_j >= 0 && destination_j < activeBoard.size)
+               bool isManMoved = false;
+               if (sourceSquare.m_man.m_directionOfMovement == Team.eDirectionOfMovement.up) // to do or to king
                {
-                    
+                    if (sourceSquare.squarePosition.x - 1 == destinationSquare.squarePosition.x &&
+                         sourceSquare.squarePosition.y - 1 == destinationSquare.squarePosition.y)
+                    {
+                         HandleManMove(sourceSquare, eDirectionType.upLeft);
+                         isManMoved = true;
+                    }
+                    else if (sourceSquare.squarePosition.x + 1 == destinationSquare.squarePosition.x &&
+                         sourceSquare.squarePosition.y - 1 == destinationSquare.squarePosition.y)
+                    {
+                         HandleManMove(sourceSquare, eDirectionType.upRight);
+                         isManMoved = true;
+                    }
                }
-               return false;
+
+               else
+               {
+                    if (sourceSquare.squarePosition.x - 1 == destinationSquare.squarePosition.x &&
+                         sourceSquare.squarePosition.y + 1 == destinationSquare.squarePosition.y)
+                    {
+                         HandleManMove(sourceSquare, eDirectionType.downLeft);
+                         isManMoved = true;
+
+
+                    }
+                    else if (sourceSquare.squarePosition.x + 1 == destinationSquare.squarePosition.x &&
+                         sourceSquare.squarePosition.y + 1 == destinationSquare.squarePosition.y)
+                    {
+                         HandleManMove(sourceSquare, eDirectionType.downRight);
+                         isManMoved = true;
+                    }
+               }
+               return isManMoved;
           }
 
-          public void Move(int source_i, int source_j, int destination_i, int destination_j)
+          public bool IsManEating(Square sourceSquare, Square destinationSquare)
           {
+               bool isManAte = false;
+               if (sourceSquare.m_man.m_directionOfMovement == Team.eDirectionOfMovement.up) // to do or to king
+               {
+                    if (sourceSquare.squarePosition.x - 2 == destinationSquare.squarePosition.x &&
+                         sourceSquare.squarePosition.y - 2 == destinationSquare.squarePosition.y)
+                    {
+                         if (activeBoard.gameBoard[destinationSquare.squarePosition.x + 1, destinationSquare.squarePosition.y + 1].m_man != null &&
+                              activeBoard.gameBoard[destinationSquare.squarePosition.x + 1, destinationSquare.squarePosition.y + 1].m_man.m_manTeam != sourceSquare.m_man.m_manTeam)
+                         {
+                              HandleManEat(sourceSquare, destinationSquare, eDirectionType.upLeft);
+                              isManAte = true;
+                         }
+                    }
+                    else if (sourceSquare.squarePosition.x + 2 == destinationSquare.squarePosition.x &&
+                         sourceSquare.squarePosition.y - 2 == destinationSquare.squarePosition.y)
+                    {
+                         if (activeBoard.gameBoard[destinationSquare.squarePosition.x - 1, destinationSquare.squarePosition.y + 1].m_man != null &&
+                              activeBoard.gameBoard[destinationSquare.squarePosition.x - 1, destinationSquare.squarePosition.y + 1].m_man.m_manTeam != sourceSquare.m_man.m_manTeam)
+                         {
+                              HandleManEat(sourceSquare, destinationSquare, eDirectionType.upRight);
+                              isManAte = true;
+                         }
+                    }
+               }
+
+               else
+               {
+                    if (sourceSquare.squarePosition.x - 2 == destinationSquare.squarePosition.x &&
+                         sourceSquare.squarePosition.y + 2 == destinationSquare.squarePosition.y)
+                    {
+                         if (activeBoard.gameBoard[destinationSquare.squarePosition.x + 1, destinationSquare.squarePosition.y - 1].m_man != null &&
+                              activeBoard.gameBoard[destinationSquare.squarePosition.x + 1, destinationSquare.squarePosition.y - 1].m_man.m_manTeam != sourceSquare.m_man.m_manTeam)
+                         {
+                              HandleManEat(sourceSquare, destinationSquare, eDirectionType.downLeft);
+                              isManAte = true;
+                         }
+
+
+                    }
+                    else if (sourceSquare.squarePosition.x + 2 == destinationSquare.squarePosition.x &&
+                         sourceSquare.squarePosition.y + 2 == destinationSquare.squarePosition.y)
+                    {
+                         if (activeBoard.gameBoard[destinationSquare.squarePosition.x - 1, destinationSquare.squarePosition.y - 1].m_man != null &&
+                              activeBoard.gameBoard[destinationSquare.squarePosition.x - 1, destinationSquare.squarePosition.y - 1].m_man.m_manTeam != sourceSquare.m_man.m_manTeam)
+                         {
+                              HandleManEat(sourceSquare, destinationSquare, eDirectionType.downRight);
+                              isManAte = true;
+                         }
+                    }
+               }
+               return isManAte;
+          }
+
+          public void HandleManMove(Square sourceSquare, Square destinationSquare)
+          {
+               sourceSquare.m_man.Move(destinationSquare);
+          }
+          public void HandleManMove(Square sourceSquare, eDirectionType directionType)
+          {
+    
+          }
+
+
+          public void HandleManEat(Square sourceSquare, Square destinationSquare, eDirectionType directionType)
+          {
+               sourceSquare.m_man.Move(destinationSquare);
+          }
+
+          public bool IsSourceLegal(Team player, Square squareSource)
+          {
+               return IsSquarePositionInBoardRange(squareSource.squarePosition) && IsManIsInCompatibleTeam(player, squareSource) ? true : false;
+          }
+
+          public bool IsSquarePositionInBoardRange(Square.SquarePosition squarePosition)
+          {
+               return (squarePosition.x >= 0 && squarePosition.x < activeBoard.size && squarePosition.y >= 0 && squarePosition.y < activeBoard.size) ? true : false;
+          }
+
+          public bool IsManIsInCompatibleTeam(Team manTeam, Square squarePosition)
+          {
+
+               return squarePosition.m_man != null && squarePosition.m_man.m_manTeam == manTeam ? true : false;
 
           }
 
-          public void ConvertInput(string userInput, int source_i, int source_j, int destination_i, int  destination_j)
+          public bool IsManIsInOpponentTeam(Man man, Square squarePosition)
           {
-               char[] hara = new char[20];
-               hara = userInput.ToCharArray();
-               source_i = (int)hara[0] - 'A';
-               source_j = (int)hara[1] - 'a';
-               destination_i = (int)hara[3] - 'A';
-               destination_j = (int)hara[4] - 'a';
-               
+               return squarePosition.m_man != null && squarePosition.m_man.m_manTeam != man.m_manTeam ? true : false;
+
+          }
+
+          public void ConvertUserInputToMove(string userInput, Square squareSource, Square squareDestination)
+          {
+               string[] splittedInput = userInput.Split('>');
+               squareSource = activeBoard.gameBoard[(int)splittedInput[0][0] - 'A', (int)splittedInput[0][1] - 'a'];
+               squareDestination = activeBoard.gameBoard[(int)splittedInput[1][0] - 'A', (int)splittedInput[1][1] - 'a'];
           }
 
           public void RunPreGameDialog()
@@ -274,6 +395,14 @@ namespace B18_Ex02
                endOfRound,
                inactive
           };
+
+          public enum eDirectionType
+          {
+               upRight,
+               upLeft,
+               downRight,
+               downLeft
+          }
 
      }
 }

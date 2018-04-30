@@ -12,7 +12,7 @@ namespace B18_Ex02
           private eTeamType m_teamType;
           public eTeamSign m_teamSign;
           private bool canEat; //to do for future implementation ~!!@!#
-          private int m_numberOfActiveMen;
+          public int m_numberOfActiveMen;
           public Man[] m_armyOfMen;
           public eDirectionOfMovement m_direction;
 
@@ -32,7 +32,6 @@ namespace B18_Ex02
           {
                up,
                down,
-               both
           }
 
           public void CreateNewTeam(eTeamType teamType, eTeamSign teamSign, int numberOfActiveMen, eDirectionOfMovement dir, string teamName)
@@ -47,7 +46,7 @@ namespace B18_Ex02
 
           public Man AssignManToPosition(Square square, int num)
           {
-              m_armyOfMen[num] = new Man(square, m_teamSign, m_direction);
+              m_armyOfMen[num] = new Man(square, this, m_direction);
               return m_armyOfMen[num];
           }
      }
