@@ -6,66 +6,96 @@ using System.Threading.Tasks;
 
 namespace B18_Ex02
 {
-     using Ex02.ConsoleUtils;
-     class Board
+     public class Board
      {
-          const int smallBoardSize = 6;
-          const int regularBoardSize = 8;
-          const int bigBoardSize = 10;
-          private int m_size;
-          public Square[,] gameBoard; //to do change to priate
-          public int size
+          private int m_boardSize;
+          private Square[,] m_actualBoard;
+
+          public int boardSize
           {
-               get { return m_size; }
+               get { return m_boardSize; }
 
 
-               set { m_size = value; }
+               set { m_boardSize = value; }
           }
 
-          public void CreateNewBoard()
+          public char GetSquareContent(int i_boardLine, int i_boardColumn)
           {
-               gameBoard = new Square[m_size, m_size];
-               for (int i = 0; i < m_size; i++)
+               char squareContent;
+               if (m_actualBoard[i_boardLine, i_boardColumn].currentMan == null)
                {
-                    for (int j = 0; j < m_size; j++)
+                    squareContent = ' ';
+               }
+               else
+               {
+                    squareContent = m_actualBoard[i_boardLine, i_boardColumn].currentMan.manSign;
+               }
+
+               return squareContent;
+          }
+
+          public Square GetSquare(int i_boardLine, int i_boardColumn)
+          {
+               return m_actualBoard[i_boardLine, i_boardColumn];
+          }
+
+          public void InitializeBoard(int i_BoardSize)
+          {
+               m_boardSize = i_BoardSize;
+               m_actualBoard = new Square[m_boardSize, m_boardSize];
+               for (int i = 0; i < m_boardSize; i++)
+               {
+                    for (int j = 0; j < m_boardSize; j++)
                     {
-                         gameBoard[i, j] = new Square();
-                         gameBoard[i, j].InitializeSquare(i, j);
+                         m_actualBoard[i, j] = new Square();
+                         m_actualBoard[i, j].InitializeSquare(i, j);
+                    }
+               }
+
+               NeighboursAssignation();
+          }
+
+          public void ClearBoard()
+          {
+
+          }
+
+          private void NeighboursAssignation()
+          {
+               for (int i = 0; i < m_boardSize; i++)
+               {
+                    for (int j = 0; j < m_boardSize; j++)
+                    {                     
+                        if (IsSquarePositionInBoardRange(i - 1, j - 1))
+                         {
+                              m_actualBoard[i, j].AssignNeighbour(m_actualBoard[i - 1, j - 1], CheckersGame.ePossibleDirections.upLeft);
+                         }
+
+                         if (IsSquarePositionInBoardRange(i - 1, j + 1))
+                         {
+                              m_actualBoard[i, j].AssignNeighbour(m_actualBoard[i - 1, j + 1], CheckersGame.ePossibleDirections.upRight);
+                         }
+
+                         if (IsSquarePositionInBoardRange(i + 1, j - 1))
+                         {
+                              m_actualBoard[i, j].AssignNeighbour(m_actualBoard[i + 1 , j - 1], CheckersGame.ePossibleDirections.downLeft);
+                         }
+
+                         if (IsSquarePositionInBoardRange(i + 1, j + 1))
+                         {
+                              m_actualBoard[i, j].AssignNeighbour(m_actualBoard[i + 1, j + 1], CheckersGame.ePossibleDirections.downRight);
+                         }
                     }
                }
           }
 
-          public void PrintBoard()
+          public bool IsSquarePositionInBoardRange(int squareLine, int squareColumn)
           {
-               Ex02.ConsoleUtils.Screen.Clear();
-               for (int i = 0; i < m_size; i++)
-               {
-                    for (int j = 0; j < m_size; j++)
-                    {
-                         if (gameBoard[i, j].m_man == null)
-                         {
-                              System.Console.Write(" ");
-                         }
-
-                         else if (gameBoard[i, j].m_man.m_manTeam.m_teamSign == Team.eTeamSign.O)
-                         {
-                              System.Console.Write('O');
-                         }
-
-                         else
-                         {
-                              System.Console.Write("X");
-                         }
-                    }
-                    System.Console.WriteLine();
-               }
+               return (squareLine >= 0 && squareLine < m_boardSize && squareColumn >= 0 && squareColumn< m_boardSize) ? true : false;
           }
 
-          public Man GetValueFromWidthAndLength(int i, int j)
-          {
-               Square.eLengthLetter l = (Square.eLengthLetter)i - 'A';
-               Square.eLengthLetter w = (Square.eLengthLetter)j - 'a';
-               return gameBoard[(int)l, (int)w].m_man;
-          }
+          
      }
+
+
 }

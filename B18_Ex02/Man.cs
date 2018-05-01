@@ -8,34 +8,78 @@ namespace B18_Ex02
 {
      public class Man
      {
-          public Team m_manTeam;
+          private Team m_manTeam;
           private Square m_currentPosition;
-          public bool m_isKing;
-          public Team.eDirectionOfMovement m_directionOfMovement;
+          private bool m_isKing;
+          private Team.eDirectionOfMovement m_manDirection;
+          private Team.eTeamSign m_manSign;
           
-
-          public Man()
+          public bool isKing
           {
-
-          }
-          public Man(Square position, Team manTeam, Team.eDirectionOfMovement dir)
-          {
-               m_currentPosition = position;
-               m_manTeam = manTeam;
-               m_directionOfMovement = dir;
+               get { return m_isKing; }
+               set { m_isKing = value; }
           }
 
-          public void Move(Square destination)
+          public Team manTeam
           {
-               destination.AttachManToSquare(this);
-               m_currentPosition.MakeEmpty();
-               m_currentPosition = destination;
+               get { return m_manTeam; }
+               set { m_manTeam = value; }
+          }
+          public Team.eDirectionOfMovement manDirection
+          {
+               get { return m_manDirection; }
+               set { m_manDirection = value; }
           }
 
-          public void BeEaten()
+          public Square currentPosition
           {
-               m_currentPosition.MakeEmpty();
-               m_manTeam.m_numberOfActiveMen--;
+               get { return m_currentPosition; }
+               set { m_currentPosition = value; }
+          }
+
+          public char manSign
+          {
+               get
+               {
+                    char signOutput;
+                    if (m_manSign == Team.eTeamSign.X)
+                    {
+                         if (m_isKing == true)
+                         {
+                              signOutput = 'K';
+                         }
+                         else
+                         {
+                              signOutput = 'X';
+                         }
+                    }
+                    else
+                    {
+                         if (m_isKing == true)
+                         {
+                              signOutput = 'U';
+                         }
+                         else
+                         {
+                              signOutput = 'O';
+                         }
+                    }
+                    return signOutput;
+               }
+          }
+
+          public void CreateNewMan(Team i_manTeam, Square i_manPosition, Team.eDirectionOfMovement i_manDirection)
+          {
+               m_manTeam = i_manTeam;
+               m_currentPosition = i_manPosition;
+               m_manDirection = i_manDirection;
+               m_manSign = i_manTeam.teamSign;
+               m_isKing = false;
+          }
+
+          public void Crown()
+          {
+               m_isKing = true;
           }
      }
 }
