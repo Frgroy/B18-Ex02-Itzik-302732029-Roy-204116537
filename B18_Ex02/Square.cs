@@ -8,7 +8,7 @@ namespace B18_Ex02
 {
      public class Square
      {
-          public struct SquarePosition
+          public class SquarePosition
           {
                private int m_squareLine;
                private int m_squareColumm;

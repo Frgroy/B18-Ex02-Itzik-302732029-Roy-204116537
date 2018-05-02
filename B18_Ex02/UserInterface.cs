@@ -14,7 +14,7 @@ namespace B18_Ex02
           const int mediumBoardSize = 8;
           const int bigBoardSize = 10;
 
-          public static void RunPreGameDialog(out string o_player1Name, out string o_player2Name, out int o_gameBoardSize, CheckersGame.eGameMode o_gameMode)
+          public static void RunPreGameDialog(out string o_player1Name, out string o_player2Name, out int o_gameBoardSize, out CheckersGame.eGameMode o_gameMode)
           {
                PrintIntroduction();
                o_player1Name = GetUserName();
@@ -141,12 +141,13 @@ namespace B18_Ex02
 
           public static void PrintMoveInfo(Team i_activeTeam, Team i_inactiveTeam)
           {
-
+               Console.WriteLine(string.Format("{0}'s move was ({1}): {2}", i_inactiveTeam.teamName, i_inactiveTeam.teamSign, i_inactiveTeam.lastMoveExecuted));
+               Console.WriteLine(string.Format("{0}'s Turn ({1}):", i_activeTeam.teamName, i_activeTeam.teamSign));
           }
 
           public static void PrintFirstMoveInfo(Team i_activeTeam)
           {
-
+               Console.WriteLine(string.Format("{0}'s Turn ({1}):", i_activeTeam.teamName, i_activeTeam.teamSign));
           }
 
           public static void HandleUserInput(ref Move requestedMove, Team i_activeTeam)

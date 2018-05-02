@@ -14,9 +14,22 @@ namespace B18_Ex02
           private eDirectionOfMovement m_direction;
           private int m_teamScore;
           private bool m_isActive;
-          private List<Man> m_armyOfMen = new List<Man>();
+          private Move m_lastMoveExecuted;
+          private LinkedList<Man> m_armyOfMen = new LinkedList<Man>();
           private List<Move> m_attackMoves = new List<Move>();
           private List<Move> m_regularMoves = new List<Move>();
+
+          public string teamName
+          {
+               get { return m_teamName; }
+               set { m_teamName = value; }
+          }
+
+          public Move lastMoveExecuted
+          {
+               get { return m_lastMoveExecuted; }
+               set { m_lastMoveExecuted = value; }
+          }
 
           public eTeamSign teamSign
           {
@@ -30,7 +43,7 @@ namespace B18_Ex02
                set { m_teamType = value; }
           }
 
-          public List<Man> armyOfMen
+          public LinkedList<Man> armyOfMen
           {
                get { return m_armyOfMen; }
                set { m_armyOfMen = value; }
@@ -59,18 +72,18 @@ namespace B18_Ex02
 
           public void DisposeMen()
           {
-
+               m_armyOfMen.Clear();
           }
 
           public void AssignManToSquare(Square i_manSquare)
           {
                Man recruitedMan = new Man();
                recruitedMan.CreateNewMan(this, i_manSquare, m_direction);
-               m_armyOfMen.Add(recruitedMan);
+               m_armyOfMen.AddLast(recruitedMan);
                i_manSquare.currentMan = recruitedMan;
           }
 
-          public void PrepareTeamForNewTurn() // to do efficiency
+          public void PrepareTeamMovesForNewTurn()
           {
                UpdateAttackMovesForAllTeam();
                UpdateRegularMovesForAllTeam();
@@ -78,6 +91,7 @@ namespace B18_Ex02
 
           public void UpdateAttackMovesForAllTeam()
           {
+               m_attackMoves.Clear();
                foreach (Man man in m_armyOfMen)
                {
                     UpdateAttackMoveForSquare(man.currentPosition);
@@ -123,27 +137,29 @@ namespace B18_Ex02
                               }
                          }
                     }
+               }
 
-                    if (i_squareToBeUpdated.squareNeighbours.upRight != null)
+               if (i_squareToBeUpdated.squareNeighbours.upRight != null)
+               {
+                    Square upRightSquare = new Square();
+                    upRightSquare = i_squareToBeUpdated.squareNeighbours.upRight;
+                    if (upRightSquare.currentMan != null)
                     {
-                         Square upRightSquare = new Square();
-                         upRightSquare = i_squareToBeUpdated.squareNeighbours.upRight;
-                         if (upRightSquare.currentMan != null)
+                         if (upRightSquare.currentMan.manTeam != i_squareToBeUpdated.currentMan.manTeam)
                          {
-                              if (upRightSquare.currentMan.manTeam != i_squareToBeUpdated.currentMan.manTeam)
+                              if (upRightSquare.squareNeighbours.upRight != null)
                               {
-                                   if (upRightSquare.squareNeighbours.upRight != null)
+                                   if (upRightSquare.squareNeighbours.upRight.currentMan == null)
                                    {
-                                        if (upRightSquare.squareNeighbours.upRight.currentMan == null)
-                                        {
-                                             Move addedMoveToAttackList = new Move(i_squareToBeUpdated, upRightSquare, upRightSquare.squareNeighbours.upRight);
-                                             m_attackMoves.Add(addedMoveToAttackList);
-                                        }
+                                        Move addedMoveToAttackList = new Move(i_squareToBeUpdated, upRightSquare, upRightSquare.squareNeighbours.upRight);
+                                        m_attackMoves.Add(addedMoveToAttackList);
                                    }
                               }
                          }
                     }
                }
+
+
           }
 
           public void UpdateDownAttacks(Square i_squareToBeUpdated)
@@ -166,22 +182,22 @@ namespace B18_Ex02
                               }
                          }
                     }
+               }
 
-                    if (i_squareToBeUpdated.squareNeighbours.downRight != null)
+               if (i_squareToBeUpdated.squareNeighbours.downRight != null)
+               {
+                    Square downRightSquare = new Square();
+                    downRightSquare = i_squareToBeUpdated.squareNeighbours.downRight;
+                    if (downRightSquare.currentMan != null)
                     {
-                         Square downRightSquare = new Square();
-                         downRightSquare = i_squareToBeUpdated.squareNeighbours.downRight;
-                         if (downRightSquare.currentMan != null)
+                         if (downRightSquare.currentMan.manTeam != i_squareToBeUpdated.currentMan.manTeam)
                          {
-                              if (downRightSquare.currentMan.manTeam != i_squareToBeUpdated.currentMan.manTeam)
+                              if (downRightSquare.squareNeighbours.downRight != null)
                               {
-                                   if (downRightSquare.squareNeighbours.downRight != null)
+                                   if (downRightSquare.squareNeighbours.downRight.currentMan == null)
                                    {
-                                        if (downRightSquare.squareNeighbours.downRight.currentMan == null)
-                                        {
-                                             Move addedMoveToAttackList = new Move(i_squareToBeUpdated, downRightSquare, downRightSquare.squareNeighbours.downRight);
-                                             m_attackMoves.Add(addedMoveToAttackList);
-                                        }
+                                        Move addedMoveToAttackList = new Move(i_squareToBeUpdated, downRightSquare, downRightSquare.squareNeighbours.downRight);
+                                        m_attackMoves.Add(addedMoveToAttackList);
                                    }
                               }
                          }
@@ -191,6 +207,7 @@ namespace B18_Ex02
 
           public void UpdateRegularMovesForAllTeam()
           {
+               m_regularMoves.Clear();
                foreach (Man man in m_armyOfMen)
                {
                     UpdateRegularMoveForSquare(man.currentPosition);

@@ -80,27 +80,42 @@ namespace B18_Ex02
           {
                bool isLegalMove = false;
 
+               isLegalMove = CheckAttackMoves(ref io_userRequestForMove, i_activeTeam);
+               if (isLegalMove == false && i_activeTeam.attackMoves.Capacity == 0)
+               {
+                    isLegalMove = CheckRegularMoves(ref io_userRequestForMove, i_activeTeam);
+               }
+
+               return isLegalMove;
+          }
+
+          bool CheckAttackMoves(ref Move io_userRequestForMove, Team i_activeTeam)
+          {
+               bool isLegalAttackMove = false;
                foreach (Move availableMove in i_activeTeam.attackMoves)
                {
                     if (IsMoveMatchToMoveInMovesList(ref io_userRequestForMove, availableMove))
                     {
-                         isLegalMove = true;
+                         isLegalAttackMove = true;
                          io_userRequestForMove = availableMove;
                     }
                }
 
-               if (isLegalMove == false && i_activeTeam.attackMoves.Capacity == 0)
+               return isLegalAttackMove;
+          }
+
+          bool CheckRegularMoves(ref Move io_userRequestForMove, Team i_activeTeam)
+          {
+               bool isLegalRegularMove = false;
+               foreach (Move availableMove in i_activeTeam.regularMoves)
                {
-                    foreach (Move availableMove in i_activeTeam.regularMoves)
+                    if (IsMoveMatchToMoveInMovesList(ref io_userRequestForMove, availableMove))
                     {
-                         if (IsMoveMatchToMoveInMovesList(ref io_userRequestForMove, availableMove))
-                         {
-                              isLegalMove = true;
-                         }
+                         isLegalRegularMove = true;
                     }
                }
 
-               return isLegalMove;
+               return isLegalRegularMove;
           }
 
           public bool IsMoveMatchToMoveInMovesList(ref Move i_userRequestForMove, Move i_availableMove)
@@ -122,18 +137,27 @@ namespace B18_Ex02
           {
               if (m_capturedSquare == null)
                {
-                    m_destinationSquare.currentMan = m_sourceSquare.currentMan;
+                    if (m_destinationSquare.currentMan == null)
+                    {
+                         m_destinationSquare.currentMan = new Man();
+                         m_destinationSquare.currentMan = m_sourceSquare.currentMan;
+                    } 
                     m_sourceSquare.currentMan.currentPosition = m_destinationSquare;
                     m_sourceSquare.currentMan = null;
                }
 
                else
                {
-                    m_destinationSquare.currentMan = m_sourceSquare.currentMan;
+                    if (m_destinationSquare.currentMan == null)
+                    {
+                         m_destinationSquare.currentMan = new Man();
+                         m_destinationSquare.currentMan = m_sourceSquare.currentMan;
+                    }
+                    m_capturedSquare.currentMan.manTeam.armyOfMen.Remove(m_capturedSquare.currentMan);
                     m_sourceSquare.currentMan.currentPosition = m_destinationSquare;
                     m_capturedSquare.currentMan = null;
                     m_sourceSquare.currentMan = null;
-
+                    
                }
           }
 
