@@ -13,6 +13,7 @@ namespace B18_Ex02
           private const int smallBoardSize = 6;
           private const int mediumBoardSize = 8;
           private const int bigBoardSize = 10;
+          private const string quitRequest = "Q";
 
           public static void RunPreGameDialog(out string o_player1Name, out string o_player2Name, out int o_gameBoardSize, out CheckersGame.eGameMode o_gameMode)
           {
@@ -56,7 +57,7 @@ namespace B18_Ex02
 
           public static bool IsLegalUserNameInserted(string i_insertedUserName)
           {
-               return Regex.IsMatch(i_insertedUserName, "^[a-z,A-Z,0-9,!-/]+$") && i_insertedUserName.Length <= maximumUserNameSize ? true : false;
+               return Regex.IsMatch(i_insertedUserName, "^[a-z,A-Z,0-9,!-/,:-@,[-`, {-~]+$") && i_insertedUserName.Length <= maximumUserNameSize ? true : false;
           }
 
           public static int GetRequestedBoardSize()
@@ -86,7 +87,7 @@ namespace B18_Ex02
           public static CheckersGame.eGameMode GetGameModeFromUser()
           {
                string gameModeMassage = string.Format(@"Please enter prefered game mode:
-(1) Versus another player
+(1) Versus Another Player
 (2) Versus Computer");
                Console.WriteLine(gameModeMassage);
                string userInputForGameMode = Console.ReadLine();
@@ -141,25 +142,37 @@ namespace B18_Ex02
 
           public static void PrintMoveInfo(Team i_activeTeam, Team i_inactiveTeam)
           {
-               Console.WriteLine(string.Format("{0}'s move was ({1}): {2}", i_inactiveTeam.teamName, i_inactiveTeam.teamSign, i_inactiveTeam.lastMoveExecuted));
+               if (i_inactiveTeam.lastMoveExecuted != null)
+               {
+                    Console.WriteLine(string.Format("{0}'s move was ({1}): {2}", i_inactiveTeam.teamName, i_inactiveTeam.teamSign, i_inactiveTeam.lastMoveExecuted.ToString()));
+               }
                Console.WriteLine(string.Format("{0}'s Turn ({1}):", i_activeTeam.teamName, i_activeTeam.teamSign));
           }
 
-          public static void PrintFirstMoveInfo(Team i_activeTeam)
+          public static void HandleUserInput(ref Move io_requestedMove, ref CheckersGame.eGameStatus i_gameStatus, Team i_activeTeam)
           {
-               Console.WriteLine(string.Format("{0}'s Turn ({1}):", i_activeTeam.teamName, i_activeTeam.teamSign));
-          }
-
-          public static void HandleUserInput(ref Move requestedMove, Team i_activeTeam)
-          {
-               //to do handle q
                string userInput = Console.ReadLine();
-               while (!requestedMove.TryParse(userInput, ref requestedMove, i_activeTeam))
+               while (!io_requestedMove.TryParse(userInput, ref io_requestedMove, i_activeTeam) && !IsLegalQuitRequest(ref i_gameStatus, userInput, i_activeTeam))
                {
                     PrintIllegalInputMassage();
                     userInput = Console.ReadLine();
                }
+          }
 
+          public static bool IsLegalQuitRequest(ref CheckersGame.eGameStatus i_gameStatus, string i_userInput, Team i_activeTeam)
+          {
+               bool isLegalQuitRequest = false;
+
+               if (i_userInput == "Q")
+               {
+                    if (i_activeTeam.isLeadingTeam == false)
+                    {
+                         isLegalQuitRequest = true;
+                         i_gameStatus = CheckersGame.eGameStatus.roundEnd;
+                    }
+               }
+
+               return isLegalQuitRequest;
           }
 
           public static bool IsLegalInputFormat(string i_userInput)
@@ -167,6 +180,40 @@ namespace B18_Ex02
                string legalMovePattern = @"^[A-Z][a-z]>[A-Z][a-z]$";
 
                return Regex.IsMatch(i_userInput, legalMovePattern);
+          }
+
+          public static void RunAnotherRoundDialog(Team i_winningTeam, ref CheckersGame.eGameStatus io_gameStatus)
+          {
+               PrintWinningTeamMassage(i_winningTeam);
+               io_gameStatus = GetGameStatusFromUser();
+          }
+
+          public static void PrintWinningTeamMassage(Team i_winningTeam)
+          {
+               string winningTeamMassage = string.Format(@"The winner is {0}, with {1} points!", i_winningTeam.teamName, i_winningTeam.teamScore);
+               Console.WriteLine(winningTeamMassage);
+          }
+
+          public static CheckersGame.eGameStatus GetGameStatusFromUser()
+          {
+               string gameStatusMassage = string.Format(@"What do you want to do now?
+(1) Play Another Round!
+(2) Exit");
+               Console.WriteLine(gameStatusMassage);
+               string userInputForGameStatus = Console.ReadLine();
+               int userChoiseForGameStatus;
+               while (!int.TryParse(userInputForGameStatus, out userChoiseForGameStatus) || !IsLegalStatusInserted(userChoiseForGameStatus))
+               {
+                    PrintIllegalInputMassage();
+                    userInputForGameStatus = Console.ReadLine();
+               }
+
+               return (CheckersGame.eGameStatus)userChoiseForGameStatus;
+          }
+
+          public static bool IsLegalStatusInserted(int i_insertedUserChoiseForGameStatus)
+          {
+               return (i_insertedUserChoiseForGameStatus == 1 || i_insertedUserChoiseForGameStatus == 2 ? true : false);
           }
      }
 }

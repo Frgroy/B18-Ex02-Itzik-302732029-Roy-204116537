@@ -56,7 +56,13 @@ namespace B18_Ex02
 
           public void ClearBoard()
           {
-
+               for (int i = 0; i < m_boardSize; i++)
+               {
+                    for (int j = 0; j < m_boardSize; j++)
+                    {
+                         m_actualBoard[i, j].currentMan = null;
+                    }
+               }
           }
 
           private void NeighboursAssignation()
@@ -91,9 +97,7 @@ namespace B18_Ex02
           public bool IsSquarePositionInBoardRange(int squareLine, int squareColumn)
           {
                return (squareLine >= 0 && squareLine < m_boardSize && squareColumn >= 0 && squareColumn< m_boardSize) ? true : false;
-          }
-
-          
+          }  
      }
 
 

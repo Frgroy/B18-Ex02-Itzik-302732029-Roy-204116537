@@ -18,7 +18,7 @@ namespace B18_Ex02
                m_destinationSquare = new Square();
           }
 
-          public Move(ref Square i_sourceSquare,ref Square i_destinationSquare)
+          public Move(ref Square i_sourceSquare, ref Square i_destinationSquare)
           {
                m_sourceSquare = i_sourceSquare;
                m_destinationSquare = i_destinationSquare;
@@ -44,10 +44,32 @@ namespace B18_Ex02
                set { m_capturedSquare = value; }
           }
 
+          public bool IsCaptureMove()
+          {
+               return m_capturedSquare != null ? true : false;
+          }
+
           public Square destinationSquare
           {
                get { return m_destinationSquare; }
                set { m_destinationSquare = value; }
+          }
+
+          public string ToString()
+          {
+               const string seperatorInMoveString = ">";
+               char sourceLengthLetter = (char)(m_sourceSquare.squarePosition.x + (int)'A');
+               char sourceWidthLetter = (char)(m_sourceSquare.squarePosition.y  + (int)'a');
+               char destinationLengthLetter = (char)(m_destinationSquare.squarePosition.x + (int)'A');
+               char destinationWidthLetter = (char)(m_destinationSquare.squarePosition.y + (int)'a');
+               string stringOfMove = string.Format("{1}{2}{0}{3}{4}",
+                    seperatorInMoveString,
+                    sourceLengthLetter.ToString(),
+                    sourceWidthLetter.ToString(),
+                    destinationLengthLetter.ToString(),
+                    destinationWidthLetter.ToString());
+
+               return stringOfMove;
           }
 
           public Move Parse(string i_userInput)
@@ -81,7 +103,7 @@ namespace B18_Ex02
                bool isLegalMove = false;
 
                isLegalMove = CheckAttackMoves(ref io_userRequestForMove, i_activeTeam);
-               if (isLegalMove == false && i_activeTeam.attackMoves.Capacity == 0)
+               if (isLegalMove == false && i_activeTeam.attackMoves.Count == 0)
                {
                     isLegalMove = CheckRegularMoves(ref io_userRequestForMove, i_activeTeam);
                }
@@ -135,32 +157,14 @@ namespace B18_Ex02
 
           public void ExecuteMove()
           {
-              if (m_capturedSquare == null)
+               m_destinationSquare.currentMan = m_sourceSquare.currentMan;
+               m_sourceSquare.currentMan.currentPosition = m_destinationSquare;
+               m_sourceSquare.currentMan = null;
+               if (IsCaptureMove() == true)
                {
-                    //if (m_destinationSquare.currentMan == null)
-                    //{
-                    // m_destinationSquare.currentMan = new Man();
-                    m_destinationSquare.currentMan = m_sourceSquare.currentMan;
-
-                    //} 
-                    m_sourceSquare.currentMan.currentPosition = m_destinationSquare;
-                    m_sourceSquare.currentMan = null;
-               }
-
-               else
-               {
-                    ////if (m_destinationSquare.currentMan == null)
-                    //{
-                       //  m_destinationSquare.currentMan = new Man();
-                         m_destinationSquare.currentMan = m_sourceSquare.currentMan;
-                    //}
                     m_capturedSquare.currentMan.manTeam.armyOfMen.Remove(m_capturedSquare.currentMan);
-                    m_sourceSquare.currentMan.currentPosition = m_destinationSquare;
                     m_capturedSquare.currentMan = null;
-                    m_sourceSquare.currentMan = null;
-                    
                }
           }
-
      }
 }

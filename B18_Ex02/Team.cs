@@ -8,12 +8,15 @@ namespace B18_Ex02
 {
      public class Team
      {
+          private const int k_manRank = 1;
+          private const int k_kingRank = 1;
           private string m_teamName;
           private eTeamType m_teamType;
           private eTeamSign m_teamSign;
           private eDirectionOfMovement m_teamDirectionOfMovement;
           private int m_teamScore;
           private Move m_lastMoveExecuted;
+          private bool m_isLeadingTeam;
           private LinkedList<Man> m_armyOfMen = new LinkedList<Man>();
           private List<Move> m_attackMoves = new List<Move>();
           private List<Move> m_regularMoves = new List<Move>();
@@ -35,8 +38,6 @@ namespace B18_Ex02
                get { return m_teamDirectionOfMovement; }
                set { m_teamDirectionOfMovement = value; }
           }
-
-          
 
           public eTeamSign teamSign
           {
@@ -68,6 +69,17 @@ namespace B18_Ex02
                set { m_regularMoves = value; }
           }
 
+          public int teamScore
+          {
+               get { return m_teamScore; }
+               set { m_teamScore = value; }
+          }
+
+          public bool isLeadingTeam
+          {
+               get { return m_isLeadingTeam; }
+               set { m_isLeadingTeam = value; }
+          }
           public Team()
           {
               
@@ -96,8 +108,8 @@ namespace B18_Ex02
 
           public void PrepareTeamMovesForNewTurn()
           {
-               UpdateAttackMovesForAllTeam();
-               UpdateRegularMovesForAllTeam();
+               UpdateAttackMoves();
+               UpdateRegularMoves();
           }
 
           public void CrownTeamKings(int i_relevantLineForCrown)
@@ -111,7 +123,7 @@ namespace B18_Ex02
                }
           }
 
-          public void UpdateAttackMovesForAllTeam()
+          public void UpdateAttackMoves()
           {
                m_attackMoves.Clear();
                foreach (Man man in m_armyOfMen)
@@ -227,7 +239,7 @@ namespace B18_Ex02
                }
           }
 
-          public void UpdateRegularMovesForAllTeam()
+          public void UpdateRegularMoves()
           {
                m_regularMoves.Clear();
                foreach (Man man in m_armyOfMen)
@@ -303,6 +315,29 @@ namespace B18_Ex02
                          m_regularMoves.Add(addedMoveToMoveList);
                     }
                }
+          }
+
+          public int CalculateTeamRank()
+          {
+               int teamRank = 0;
+               foreach (Man man in m_armyOfMen)
+               {
+                    if (man.isKing == true)
+                    {
+                         teamRank += k_kingRank;
+                    }
+                    else
+                    {
+                         teamRank += k_manRank;
+                    }
+               }
+
+               return teamRank;
+          }
+
+          public void CalculateTeamScore(int i_teamRank, int i_opponentRank)
+          {
+               m_teamScore = i_teamRank - i_opponentRank;
           }
 
           public enum eTeamType
