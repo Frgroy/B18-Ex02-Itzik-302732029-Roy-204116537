@@ -11,9 +11,8 @@ namespace B18_Ex02
           private string m_teamName;
           private eTeamType m_teamType;
           private eTeamSign m_teamSign;
-          private eDirectionOfMovement m_direction;
+          private eDirectionOfMovement m_teamDirectionOfMovement;
           private int m_teamScore;
-          private bool m_isActive;
           private Move m_lastMoveExecuted;
           private LinkedList<Man> m_armyOfMen = new LinkedList<Man>();
           private List<Move> m_attackMoves = new List<Move>();
@@ -30,6 +29,14 @@ namespace B18_Ex02
                get { return m_lastMoveExecuted; }
                set { m_lastMoveExecuted = value; }
           }
+
+          public eDirectionOfMovement teamDirectionOfMovement
+          {
+               get { return m_teamDirectionOfMovement; }
+               set { m_teamDirectionOfMovement = value; }
+          }
+
+          
 
           public eTeamSign teamSign
           {
@@ -61,11 +68,16 @@ namespace B18_Ex02
                set { m_regularMoves = value; }
           }
 
-          public void InitializeTeam(string i_playerName, eTeamType i_teamType, eDirectionOfMovement i_teamDirection, eTeamSign i_teamSign)
+          public Team()
+          {
+              
+          }
+
+          public Team(string i_playerName, eTeamType i_teamType, eDirectionOfMovement i_teamDirection, eTeamSign i_teamSign)
           {
                m_teamName = i_playerName;
                m_teamType = i_teamType;
-               m_direction = i_teamDirection;
+               m_teamDirectionOfMovement = i_teamDirection;
                m_teamSign = i_teamSign;
                m_teamScore = 0;
           }
@@ -77,8 +89,7 @@ namespace B18_Ex02
 
           public void AssignManToSquare(Square i_manSquare)
           {
-               Man recruitedMan = new Man();
-               recruitedMan.CreateNewMan(this, i_manSquare, m_direction);
+               Man recruitedMan = new Man(this, i_manSquare, m_teamDirectionOfMovement);
                m_armyOfMen.AddLast(recruitedMan);
                i_manSquare.currentMan = recruitedMan;
           }
@@ -87,6 +98,17 @@ namespace B18_Ex02
           {
                UpdateAttackMovesForAllTeam();
                UpdateRegularMovesForAllTeam();
+          }
+
+          public void CrownTeamKings(int i_relevantLineForCrown)
+          {
+               foreach (Man man in m_armyOfMen)
+               {
+                    if (man.currentPosition.squarePosition.y == i_relevantLineForCrown)
+                    {
+                         man.Crown();
+                    }
+               }
           }
 
           public void UpdateAttackMovesForAllTeam()

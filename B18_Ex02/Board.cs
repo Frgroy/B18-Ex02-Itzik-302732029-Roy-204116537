@@ -9,7 +9,7 @@ namespace B18_Ex02
      public class Board
      {
           private int m_boardSize;
-          private Square[,] m_actualBoard;
+          private readonly Square[,] m_actualBoard;
 
           public int boardSize
           {
@@ -39,7 +39,7 @@ namespace B18_Ex02
                return m_actualBoard[i_boardLine, i_boardColumn];
           }
 
-          public void InitializeBoard(int i_BoardSize)
+          public Board(int i_BoardSize)
           {
                m_boardSize = i_BoardSize;
                m_actualBoard = new Square[m_boardSize, m_boardSize];
@@ -47,8 +47,7 @@ namespace B18_Ex02
                {
                     for (int j = 0; j < m_boardSize; j++)
                     {
-                         m_actualBoard[i, j] = new Square();
-                         m_actualBoard[i, j].InitializeSquare(i, j);
+                         m_actualBoard[i, j] = new Square(i, j);
                     }
                }
 

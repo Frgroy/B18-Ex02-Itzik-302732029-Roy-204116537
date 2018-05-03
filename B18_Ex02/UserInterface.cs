@@ -9,10 +9,10 @@ namespace B18_Ex02
 {
      public static class UserInterface
      {
-          const int maximumUserNameSize = 20;
-          const int smallBoardSize = 6;
-          const int mediumBoardSize = 8;
-          const int bigBoardSize = 10;
+          private const int maximumUserNameSize = 20;
+          private const int smallBoardSize = 6;
+          private const int mediumBoardSize = 8;
+          private const int bigBoardSize = 10;
 
           public static void RunPreGameDialog(out string o_player1Name, out string o_player2Name, out int o_gameBoardSize, out CheckersGame.eGameMode o_gameMode)
           {

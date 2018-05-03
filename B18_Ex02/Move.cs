@@ -137,22 +137,23 @@ namespace B18_Ex02
           {
               if (m_capturedSquare == null)
                {
-                    if (m_destinationSquare.currentMan == null)
-                    {
-                         m_destinationSquare.currentMan = new Man();
-                         m_destinationSquare.currentMan = m_sourceSquare.currentMan;
-                    } 
+                    //if (m_destinationSquare.currentMan == null)
+                    //{
+                    // m_destinationSquare.currentMan = new Man();
+                    m_destinationSquare.currentMan = m_sourceSquare.currentMan;
+
+                    //} 
                     m_sourceSquare.currentMan.currentPosition = m_destinationSquare;
                     m_sourceSquare.currentMan = null;
                }
 
                else
                {
-                    if (m_destinationSquare.currentMan == null)
-                    {
-                         m_destinationSquare.currentMan = new Man();
+                    ////if (m_destinationSquare.currentMan == null)
+                    //{
+                       //  m_destinationSquare.currentMan = new Man();
                          m_destinationSquare.currentMan = m_sourceSquare.currentMan;
-                    }
+                    //}
                     m_capturedSquare.currentMan.manTeam.armyOfMen.Remove(m_capturedSquare.currentMan);
                     m_sourceSquare.currentMan.currentPosition = m_destinationSquare;
                     m_capturedSquare.currentMan = null;

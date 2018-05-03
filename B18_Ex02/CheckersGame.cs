@@ -8,9 +8,9 @@ namespace B18_Ex02
 {
      public class CheckersGame
      {
-          private Team m_player1 = new Team();
-          private Team m_player2 = new Team();
-          private Board m_gameBoard = new Board();
+          private Team m_player1;
+          private Team m_player2;
+          private Board m_gameBoard;
           private Team m_activeTeam = new Team();
           private Team m_inactiveTeam = new Team();
           private eGameMode m_gameMode;
@@ -45,21 +45,21 @@ namespace B18_Ex02
                eGameMode insertedGameMode;
                UserInterface.RunPreGameDialog(out player1Name, out player2Name, out gameBoardSize, out insertedGameMode);
                InitializeTeams(player1Name, player2Name, insertedGameMode);
-               m_gameBoard.InitializeBoard(gameBoardSize);
+               m_gameBoard = new Board(gameBoardSize);
                m_gameStatus = eGameStatus.active;
           }
 
           public void InitializeTeams(string i_player1Name, string i_player2Name, eGameMode i_gameMode)
           {
-               m_player1.InitializeTeam(i_player1Name, Team.eTeamType.user, Team.eDirectionOfMovement.up, Team.eTeamSign.X);
+               m_player1 = new Team(i_player1Name, Team.eTeamType.user, Team.eDirectionOfMovement.up, Team.eTeamSign.X);
                if (i_gameMode == eGameMode.VersusAnotherPlayer)
                {
-                    m_player2.InitializeTeam(i_player2Name, Team.eTeamType.user, Team.eDirectionOfMovement.down, Team.eTeamSign.O);
+                    m_player2 = new Team(i_player2Name, Team.eTeamType.user, Team.eDirectionOfMovement.down, Team.eTeamSign.O);
                }
 
                else
                {
-                    m_player2.InitializeTeam(i_player2Name, Team.eTeamType.computer, Team.eDirectionOfMovement.down, Team.eTeamSign.O);
+                    m_player2 = new Team(i_player2Name, Team.eTeamType.computer, Team.eDirectionOfMovement.down, Team.eTeamSign.O);
                }
           }
 
@@ -124,6 +124,24 @@ namespace B18_Ex02
                m_inactiveTeam.PrepareTeamMovesForNewTurn();
           }
 
+          public void CrownNewKings()
+          {
+               int relevantLineForCrown;
+               if (m_activeTeam.teamDirectionOfMovement == Team.eDirectionOfMovement.up)
+               {
+                    relevantLineForCrown = m_gameBoard.boardSize - 1;
+               }
+
+               else // m_activeTeam.teamDirectionOfMovement == Team.eDirectionOfMovement.down
+               {
+                    relevantLineForCrown = 0;
+               }
+
+               m_activeTeam.CrownTeamKings(relevantLineForCrown);
+               m_inactiveTeam.CrownTeamKings(relevantLineForCrown);
+
+          }
+
           public void ExecutePlayerTurn()
           {
                UpdateMovesInTeams();
@@ -136,6 +154,7 @@ namespace B18_Ex02
                {
                     ExecuteComputerTurn();
                }
+               CrownNewKings();
           }
 
           public void ExecuteUserTurn()
@@ -150,7 +169,8 @@ namespace B18_Ex02
                     {
                          Move newMove = new Move();
                          UserInterface.HandleUserInput(ref newMove, m_activeTeam);
-                         if (newMove.destinationSquare.squarePosition == requestedMove.sourceSquare.squarePosition)
+                         if (newMove.destinationSquare.squarePosition.x == requestedMove.sourceSquare.squarePosition.x &&
+                       newMove.destinationSquare.squarePosition.y == requestedMove.sourceSquare.squarePosition.y)
                          {
                               newMove.ExecuteMove();
                               m_activeTeam.UpdateAttackMovesForAllTeam();
@@ -209,13 +229,13 @@ namespace B18_Ex02
           {
                Random randomMove = new Random();
                Move generatedMove = new Move();
-               if (m_activeTeam.attackMoves.Capacity > 0)
+               if (m_activeTeam.attackMoves.Count > 0)
                {
-                    generatedMove = m_activeTeam.attackMoves[randomMove.Next(0, m_activeTeam.attackMoves.Capacity)];
+                    generatedMove = m_activeTeam.attackMoves[randomMove.Next(0, m_activeTeam.attackMoves.Count)];
                }
                else
                {
-                    generatedMove = m_activeTeam.regularMoves[randomMove.Next(0, m_activeTeam.regularMoves.Capacity)];
+                    generatedMove = m_activeTeam.regularMoves[randomMove.Next(0, m_activeTeam.regularMoves.Count)];
                }
 
                return generatedMove;
@@ -226,7 +246,8 @@ namespace B18_Ex02
                List<Move> relevantMoves = new List<Move>();
                foreach (Move move in io_executedMove.sourceSquare.currentMan.manTeam.attackMoves)
                {
-                    if (move.destinationSquare.squarePosition == io_executedMove.sourceSquare.squarePosition)
+                    if (move.destinationSquare.squarePosition.x == io_executedMove.sourceSquare.squarePosition.x &&
+                         move.destinationSquare.squarePosition.y == io_executedMove.sourceSquare.squarePosition.y)
                     {
                          relevantMoves.Add(move);
                     }

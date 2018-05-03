@@ -8,6 +8,10 @@ namespace B18_Ex02
 {
      public class Man
      {
+          private const char k_upDirectionKingSign = 'K';
+          private const char k_upDirectionManSign = 'X';
+          private const char k_downDirectionKingSign = 'U';
+          private const char k_downDirectionManSign = 'O';
           private Team m_manTeam;
           private Square m_currentPosition;
           private bool m_isKing;
@@ -25,6 +29,7 @@ namespace B18_Ex02
                get { return m_manTeam; }
                set { m_manTeam = value; }
           }
+
           public Team.eDirectionOfMovement manDirection
           {
                get { return m_manDirection; }
@@ -46,29 +51,29 @@ namespace B18_Ex02
                     {
                          if (m_isKing == true)
                          {
-                              signOutput = 'K';
+                              signOutput = k_upDirectionKingSign;
                          }
                          else
                          {
-                              signOutput = 'X';
+                              signOutput = k_upDirectionManSign;
                          }
                     }
                     else
                     {
                          if (m_isKing == true)
                          {
-                              signOutput = 'U';
+                              signOutput = k_downDirectionKingSign;
                          }
                          else
                          {
-                              signOutput = 'O';
+                              signOutput = k_downDirectionManSign;
                          }
                     }
                     return signOutput;
                }
           }
 
-          public void CreateNewMan(Team i_manTeam, Square i_manPosition, Team.eDirectionOfMovement i_manDirection)
+          public Man(Team i_manTeam, Square i_manPosition, Team.eDirectionOfMovement i_manDirection)
           {
                m_manTeam = i_manTeam;
                m_currentPosition = i_manPosition;

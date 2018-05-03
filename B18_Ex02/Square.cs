@@ -8,7 +8,7 @@ namespace B18_Ex02
 {
      public class Square
      {
-          public class SquarePosition
+          public struct SquarePosition
           {
                private int m_squareLine;
                private int m_squareColumm;
@@ -94,7 +94,12 @@ namespace B18_Ex02
                set { m_squareNeighbours = value; }
           }
 
-          public void InitializeSquare(int i_squareLine, int i_squareColumm)
+          public Square()
+          {
+
+          }
+
+          public Square(int i_squareLine, int i_squareColumm)
           {
                m_squarePosition = new SquarePosition(i_squareLine, i_squareColumm);
                if ((m_squarePosition.x + m_squarePosition.y) % 2 == 0)
