@@ -10,8 +10,7 @@ namespace B18_Ex02
      {
           public static void Main()
           {
-               CheckersGame game = new CheckersGame();
-               game.Run();
+               UserInterface.RunGame();
           }
      }
 }

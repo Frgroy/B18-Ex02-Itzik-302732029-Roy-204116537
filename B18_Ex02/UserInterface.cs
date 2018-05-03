@@ -15,6 +15,24 @@ namespace B18_Ex02
           private const int bigBoardSize = 10;
           private const string quitRequest = "Q";
 
+          public static void RunGame()
+          {
+               CheckersGame game = new CheckersGame();
+               game.CreateNewGame();
+               while (game.status == CheckersGame.eGameStatus.activeGame)
+               {
+                    game.CreateNewRound();
+                    while (game.status == CheckersGame.eGameStatus.inRound)
+                    {
+                         game.ManageRound();
+                    } 
+                    if (game.status == CheckersGame.eGameStatus.startingNewRound)
+                    {
+                         game.status = CheckersGame.eGameStatus.activeGame;
+                    }
+               }
+          }
+
           public static void RunPreGameDialog(out string o_player1Name, out string o_player2Name, out int o_gameBoardSize, out CheckersGame.eGameMode o_gameMode)
           {
                PrintIntroduction();

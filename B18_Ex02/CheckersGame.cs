@@ -22,19 +22,10 @@ namespace B18_Ex02
                set { m_gameMode = value; }
           }
 
-          public void Run()
+          public eGameStatus status
           {
-               CreateNewGame();
-               while (m_gameStatus == eGameStatus.activeGame)
-               {
-                    CreateNewRound();
-                    RunRound();
-                    if (m_gameStatus == eGameStatus.startingNewRound)
-                    {
-                         CreateNewRound();
-                         RunRound();
-                    }
-               }
+               get { return m_gameStatus; }
+               set { m_gameStatus = value; }
           }
 
           public void CreateNewGame()
@@ -112,13 +103,10 @@ namespace B18_Ex02
                UpdateMovesInTeams();
           }
 
-          public void RunRound()
+          public void ManageRound()
           {
-               while (m_gameStatus == eGameStatus.inRound)
-               {
-                    ExecutePlayerTurn();
-                    SwapActiveTeam();
-               }
+               ExecutePlayerTurn();
+               SwapActiveTeam();
           }
 
           public void UpdateMovesInTeams()
@@ -297,8 +285,8 @@ namespace B18_Ex02
                List<Move> relevantMoves = new List<Move>();
                foreach (Move move in io_executedMove.sourceSquare.currentMan.manTeam.attackMoves)
                {
-                    if (move.destinationSquare.squarePosition.x == io_executedMove.sourceSquare.squarePosition.x &&
-                         move.destinationSquare.squarePosition.y == io_executedMove.sourceSquare.squarePosition.y)
+                    if (move.sourceSquare.squarePosition.x == io_executedMove.destinationSquare.squarePosition.x &&
+                         move.sourceSquare.squarePosition.y == io_executedMove.destinationSquare.squarePosition.y)
                     {
                          relevantMoves.Add(move);
                     }
