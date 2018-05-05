@@ -69,6 +69,7 @@ namespace B18_Ex02
                               signOutput = k_downDirectionManSign;
                          }
                     }
+
                     return signOutput;
                }
           }

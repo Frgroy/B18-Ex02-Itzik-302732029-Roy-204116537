@@ -9,7 +9,7 @@ namespace B18_Ex02
      public class Team
      {
           private const int k_manRank = 1;
-          private const int k_kingRank = 1;
+          private const int k_kingRank = 4;
           private string m_teamName;
           private eTeamType m_teamType;
           private eTeamSign m_teamSign;
@@ -80,9 +80,9 @@ namespace B18_Ex02
                get { return m_isLeadingTeam; }
                set { m_isLeadingTeam = value; }
           }
+
           public Team()
-          {
-              
+          {    
           }
 
           public Team(string i_playerName, eTeamType i_teamType, eDirectionOfMovement i_teamDirection, eTeamSign i_teamSign)
@@ -139,13 +139,11 @@ namespace B18_Ex02
                     UpdateUpAttacks(i_squareToBeUpdated);
                     UpdateDownAttacks(i_squareToBeUpdated);
                }
-
                else if (i_squareToBeUpdated.currentMan.manDirection == Team.eDirectionOfMovement.up)
                {
                     UpdateUpAttacks(i_squareToBeUpdated);
                }
-
-               else //squareToBeUpdated.currentMan.manDirection == Team.eDirectionOfMovement.down
+               else
                {
                     UpdateDownAttacks(i_squareToBeUpdated);
                }
@@ -165,7 +163,7 @@ namespace B18_Ex02
                               {
                                    if (upLeftSquare.squareNeighbours.upLeft.currentMan == null)
                                    {
-                                        Move addedMoveToAttackList = new Move(i_squareToBeUpdated, upLeftSquare, upLeftSquare.squareNeighbours.upLeft);
+                                        Move addedMoveToAttackList = new Move(i_squareToBeUpdated, upLeftSquare, upLeftSquare.squareNeighbours.upLeft, Move.eMoveOption.attackMove);
                                         m_attackMoves.Add(addedMoveToAttackList);
                                    }
                               }
@@ -185,15 +183,13 @@ namespace B18_Ex02
                               {
                                    if (upRightSquare.squareNeighbours.upRight.currentMan == null)
                                    {
-                                        Move addedMoveToAttackList = new Move(i_squareToBeUpdated, upRightSquare, upRightSquare.squareNeighbours.upRight);
+                                        Move addedMoveToAttackList = new Move(i_squareToBeUpdated, upRightSquare, upRightSquare.squareNeighbours.upRight, Move.eMoveOption.attackMove);
                                         m_attackMoves.Add(addedMoveToAttackList);
                                    }
                               }
                          }
                     }
                }
-
-
           }
 
           public void UpdateDownAttacks(Square i_squareToBeUpdated)
@@ -210,7 +206,7 @@ namespace B18_Ex02
                               {
                                    if (downLeftSquare.squareNeighbours.downLeft.currentMan == null)
                                    {
-                                        Move addedMoveToAttackList = new Move(i_squareToBeUpdated, downLeftSquare, downLeftSquare.squareNeighbours.downLeft);
+                                        Move addedMoveToAttackList = new Move(i_squareToBeUpdated, downLeftSquare, downLeftSquare.squareNeighbours.downLeft, Move.eMoveOption.attackMove);
                                         m_attackMoves.Add(addedMoveToAttackList);
                                    }
                               }
@@ -230,7 +226,7 @@ namespace B18_Ex02
                               {
                                    if (downRightSquare.squareNeighbours.downRight.currentMan == null)
                                    {
-                                        Move addedMoveToAttackList = new Move(i_squareToBeUpdated, downRightSquare, downRightSquare.squareNeighbours.downRight);
+                                        Move addedMoveToAttackList = new Move(i_squareToBeUpdated, downRightSquare, downRightSquare.squareNeighbours.downRight, Move.eMoveOption.attackMove);
                                         m_attackMoves.Add(addedMoveToAttackList);
                                    }
                               }
@@ -255,13 +251,11 @@ namespace B18_Ex02
                     UpdateUpMoves(i_squareToBeUpdated);
                     UpdateDownMoves(i_squareToBeUpdated);
                }
-
                else if (i_squareToBeUpdated.currentMan.manDirection == Team.eDirectionOfMovement.up)
                {
                     UpdateUpMoves(i_squareToBeUpdated);
                }
-
-               else //squareToBeUpdated.currentMan.manDirection == Team.eDirectionOfMovement.down
+               else
                {
                     UpdateDownMoves(i_squareToBeUpdated);
                }
@@ -275,7 +269,7 @@ namespace B18_Ex02
                     {
                          Square upLeftSquare = new Square();
                          upLeftSquare = i_squareToBeUpdated.squareNeighbours.upLeft;
-                         Move addedMoveToMoveList = new Move(ref i_squareToBeUpdated, ref upLeftSquare);
+                         Move addedMoveToMoveList = new Move(i_squareToBeUpdated, upLeftSquare);
                          m_regularMoves.Add(addedMoveToMoveList);
                     }
                }
@@ -286,7 +280,7 @@ namespace B18_Ex02
                     {
                          Square upRightSquare = new Square();
                          upRightSquare = i_squareToBeUpdated.squareNeighbours.upRight;
-                         Move addedMoveToMoveList = new Move(ref i_squareToBeUpdated, ref upRightSquare);
+                         Move addedMoveToMoveList = new Move(i_squareToBeUpdated, upRightSquare);
                          m_regularMoves.Add(addedMoveToMoveList);
                     }
                }
@@ -300,7 +294,7 @@ namespace B18_Ex02
                     {
                          Square downLeftSquare = new Square();
                          downLeftSquare = i_squareToBeUpdated.squareNeighbours.downLeft;
-                         Move addedMoveToMoveList = new Move(ref i_squareToBeUpdated, ref downLeftSquare);
+                         Move addedMoveToMoveList = new Move(i_squareToBeUpdated, downLeftSquare);
                          m_regularMoves.Add(addedMoveToMoveList);
                     }
                }
@@ -311,7 +305,7 @@ namespace B18_Ex02
                     {
                          Square downRightSquare = new Square();
                          downRightSquare = i_squareToBeUpdated.squareNeighbours.downRight;
-                         Move addedMoveToMoveList = new Move(ref i_squareToBeUpdated, ref downRightSquare);
+                         Move addedMoveToMoveList = new Move(i_squareToBeUpdated, downRightSquare);
                          m_regularMoves.Add(addedMoveToMoveList);
                     }
                }
@@ -337,7 +331,12 @@ namespace B18_Ex02
 
           public void CalculateTeamScore(int i_teamRank, int i_opponentRank)
           {
-               m_teamScore = i_teamRank - i_opponentRank;
+               m_teamScore += i_teamRank - i_opponentRank;
+          }
+
+          public bool IsTeamCanQuit()
+          {
+               return m_isLeadingTeam == false ? true : false;
           }
 
           public enum eTeamType

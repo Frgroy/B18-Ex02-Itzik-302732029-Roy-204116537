@@ -30,15 +30,14 @@ namespace B18_Ex02
                     get { return m_squareLine; }
                     set { m_squareLine = value; }
                }
-
           }
 
           public class SquareNeighbours
           {
-               Square m_upRightSquare;
-               Square m_upLeftSquare;
-               Square m_downRightSquare;
-               Square m_downLeftSquare;
+               private Square m_upRightSquare;
+               private Square m_upLeftSquare;
+               private Square m_downRightSquare;
+               private Square m_downLeftSquare;
 
                public Square upRight
                {
@@ -96,7 +95,6 @@ namespace B18_Ex02
 
           public Square()
           {
-
           }
 
           public Square(int i_squareLine, int i_squareColumm)
@@ -119,31 +117,26 @@ namespace B18_Ex02
                     m_squareNeighbours.upLeft = new Square();
                     m_squareNeighbours.upLeft = i_neighbourSquare;
                }
-
                else if (i_squareDirection == CheckersGame.ePossibleDirections.upRight)
                {
                     m_squareNeighbours.upRight = new Square();
                     m_squareNeighbours.upRight = i_neighbourSquare;
                }
-
                else if (i_squareDirection == CheckersGame.ePossibleDirections.downLeft)
                {
                     m_squareNeighbours.downLeft = new Square();
                     m_squareNeighbours.downLeft = i_neighbourSquare;
                }
-
-               else // i_squareDirection == CheckersGame.ePossibleDirections.downRight
+               else
                {
                     m_squareNeighbours.downRight = new Square();
                     m_squareNeighbours.downRight = i_neighbourSquare;
                }
           }
 
-          
           public enum eSquareColor
           {
                Black, White
           }
-
      }
 }

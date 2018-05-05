@@ -16,7 +16,26 @@ namespace B18_Ex02
           private eGameMode m_gameMode;
           private eGameStatus m_gameStatus;
 
-          public eGameMode gameMode
+          public Team activeTeam
+          {
+               get { return m_activeTeam; }
+               set { m_activeTeam = value; }
+          }
+
+          public Team inactiveTeam
+          {
+               get { return m_inactiveTeam; }
+               set { m_inactiveTeam = value; }
+          }
+
+          public Board board
+          {
+               get { return m_gameBoard; }
+
+               set { m_gameBoard = value; }
+          }
+
+          public eGameMode mode
           {
                get { return m_gameMode; }
                set { m_gameMode = value; }
@@ -28,16 +47,12 @@ namespace B18_Ex02
                set { m_gameStatus = value; }
           }
 
-          public void CreateNewGame()
+          public CheckersGame(string i_player1Name, string i_player2Name, int i_gameBoardSize, eGameMode i_gameMode)
           {
-               string player1Name;
-               string player2Name;
-               int gameBoardSize;
-               eGameMode insertedGameMode;
-               UserInterface.RunPreGameDialog(out player1Name, out player2Name, out gameBoardSize, out insertedGameMode);
-               InitializeTeams(player1Name, player2Name, insertedGameMode);
-               m_gameBoard = new Board(gameBoardSize);
                m_gameStatus = eGameStatus.activeGame;
+               m_gameMode = i_gameMode;
+               m_gameBoard = new Board(i_gameBoardSize);
+               InitializeTeams(i_player1Name, i_player2Name, i_gameMode);
           }
 
           public void InitializeTeams(string i_player1Name, string i_player2Name, eGameMode i_gameMode)
@@ -47,17 +62,15 @@ namespace B18_Ex02
                {
                     m_player2 = new Team(i_player2Name, Team.eTeamType.user, Team.eDirectionOfMovement.down, Team.eTeamSign.O);
                }
-
                else
                {
                     m_player2 = new Team(i_player2Name, Team.eTeamType.computer, Team.eDirectionOfMovement.down, Team.eTeamSign.O);
                }
-
           }
 
           public void AssignMenToTeams()
           {
-               for (int i = 0; i < m_gameBoard.boardSize / 2 - 1; i++)
+               for (int i = 0; i < (m_gameBoard.boardSize / 2) - 1; i++)
                {
                     for (int j = 0; j < m_gameBoard.boardSize; j++)
                     {
@@ -91,8 +104,6 @@ namespace B18_Ex02
 
           public void RestoreTeams()
           {
-               m_activeTeam.teamScore = 0;
-               m_inactiveTeam.teamScore = 0;
                m_activeTeam.isLeadingTeam = true;
                m_inactiveTeam.isLeadingTeam = true;
                m_activeTeam.lastMoveExecuted = null;
@@ -101,12 +112,6 @@ namespace B18_Ex02
                m_inactiveTeam.DisposeMen();
                AssignMenToTeams();
                UpdateMovesInTeams();
-          }
-
-          public void ManageRound()
-          {
-               ExecutePlayerTurn();
-               SwapActiveTeam();
           }
 
           public void UpdateMovesInTeams()
@@ -122,8 +127,7 @@ namespace B18_Ex02
                {
                     relevantLineForCrown = 0;
                }
-
-               else // m_activeTeam.teamDirectionOfMovement == Team.eDirectionOfMovement.down
+               else
                {
                     relevantLineForCrown = m_gameBoard.boardSize - 1;
                }
@@ -133,89 +137,57 @@ namespace B18_Ex02
 
           public void MakeAMoveProcess(Move i_executingMove)
           {
-               i_executingMove.ExecuteMove();
-               m_activeTeam.lastMoveExecuted = i_executingMove;
-               if (i_executingMove.IsCaptureMove())
+               if (i_executingMove.moveOption == Move.eMoveOption.quit)
                {
-                    m_activeTeam.UpdateAttackMoves();
+                    m_gameStatus = eGameStatus.roundEnd;
                }
-               UserInterface.PrintGameBoard(m_gameBoard);
-               UserInterface.PrintMoveInfo(m_activeTeam, m_inactiveTeam);
+               else
+               {
+                    i_executingMove.ExecuteMove();
+                    m_activeTeam.lastMoveExecuted = i_executingMove;
+                    CrownNewKings();
+                    UpdateLeaderTeam();
+               }
+
+               if (IsEndOfRound())
+               {
+                    CalculateScore();
+               }
           }
 
-          public void UpdateScore()
+          public void UpdateLeaderTeam()
           {
-               m_activeTeam.CalculateTeamScore(m_activeTeam.CalculateTeamRank(), m_inactiveTeam.CalculateTeamRank());
-               m_inactiveTeam.CalculateTeamScore(m_inactiveTeam.CalculateTeamRank(), m_activeTeam.CalculateTeamRank());
-               if (m_activeTeam.teamScore > m_inactiveTeam.teamScore)
+               if (m_activeTeam.CalculateTeamRank() > m_inactiveTeam.CalculateTeamRank())
                {
                     m_activeTeam.isLeadingTeam = true;
                     m_inactiveTeam.isLeadingTeam = false;
                }
-
-               else if (m_activeTeam.teamScore == m_inactiveTeam.teamScore)
+               else if (m_activeTeam.CalculateTeamRank() == m_inactiveTeam.CalculateTeamRank())
                {
                     m_activeTeam.isLeadingTeam = true;
                     m_inactiveTeam.isLeadingTeam = true;
                }
-
-               else //m_activeTeam.teamScore < m_inactiveTeam.teamScore
+               else
                {
                     m_activeTeam.isLeadingTeam = false;
                     m_inactiveTeam.isLeadingTeam = true;
                }
-
           }
 
-          public void ExecutePlayerTurn()
+          public void CalculateScore()
           {
-               UpdateMovesInTeams();
-               if (m_activeTeam.teamType == Team.eTeamType.user)
+               if (m_activeTeam.isLeadingTeam == true && m_inactiveTeam.isLeadingTeam == true)
                {
-                    ExecuteUserTurn();
+                    m_activeTeam.CalculateTeamScore(m_activeTeam.CalculateTeamRank(), m_inactiveTeam.CalculateTeamRank());
+                    m_inactiveTeam.CalculateTeamScore(m_inactiveTeam.CalculateTeamRank(), m_activeTeam.CalculateTeamRank());
                }
-               else //m_activeTeam.teamType == Team.eTeamType.computer
+               else if (m_activeTeam.isLeadingTeam == true)
                {
-                    ExecuteComputerTurn();
+                    m_activeTeam.CalculateTeamScore(m_activeTeam.CalculateTeamRank(), m_inactiveTeam.CalculateTeamRank());
                }
-               CrownNewKings();
-               UpdateScore();
-               if (IsEndOfRound())
+               else
                {
-                    if (m_activeTeam.isLeadingTeam == true)
-                    {
-                         HandleEndOfRound(m_activeTeam);
-                    }
-                    else
-                    {
-                         HandleEndOfRound(m_inactiveTeam);
-                    }
-               }
-          }
-
-          public void ExecuteUserTurn()
-          {
-               UserInterface.PrintGameBoard(m_gameBoard);
-               UserInterface.PrintMoveInfo(m_activeTeam, m_inactiveTeam);
-               Move requestedMove = new Move();
-               UserInterface.HandleUserInput(ref requestedMove, ref m_gameStatus, m_activeTeam);
-               if (m_gameStatus == eGameStatus.inRound)
-               {
-                    MakeAMoveProcess(requestedMove);
-                    if (requestedMove.IsCaptureMove() == true)
-                    {
-                         while (IsAttackMovesStillExist(requestedMove))
-                         {
-                              Move progressiveMove = new Move();
-                              UserInterface.HandleUserInput(ref progressiveMove, ref m_gameStatus, m_activeTeam);
-                              if (progressiveMove.sourceSquare.squarePosition.x == requestedMove.destinationSquare.squarePosition.x &&
-                            progressiveMove.sourceSquare.squarePosition.y == requestedMove.destinationSquare.squarePosition.y)
-                              {
-                                   MakeAMoveProcess(progressiveMove);
-                                   requestedMove = progressiveMove;
-                              }
-                         }
-                    }
+                    m_inactiveTeam.CalculateTeamScore(m_inactiveTeam.CalculateTeamRank(), m_activeTeam.CalculateTeamRank());
                }
           }
 
@@ -226,42 +198,30 @@ namespace B18_Ex02
                     m_activeTeam = m_player2;
                     m_inactiveTeam = m_player1;
                }
-
-               else //m_activeTeam == m_player2
+               else
                {
                     m_activeTeam = m_player1;
                     m_inactiveTeam = m_player2;
                }
           }
 
-          public bool IsAttackMovesStillExist(Move i_requestedMove)
+          public bool IsProgressiveMoveAvailable(Move i_requestedMove)
           {
-               bool isAttackMovesStillExist = false;
-               foreach (Move activeMove in i_requestedMove.destinationSquare.currentMan.manTeam.attackMoves)
+               UpdateMovesInTeams();
+               bool isProgressiveMoveAvailable = false;
+               if (i_requestedMove.moveOption == Move.eMoveOption.attackMove)
                {
-                    if (i_requestedMove.destinationSquare.squarePosition.x == activeMove.sourceSquare.squarePosition.x &&
-                         i_requestedMove.destinationSquare.squarePosition.y == activeMove.sourceSquare.squarePosition.y)
+                    foreach (Move activeMove in i_requestedMove.destinationSquare.currentMan.manTeam.attackMoves)
                     {
-                         isAttackMovesStillExist = true;
+                         if (i_requestedMove.destinationSquare.squarePosition.x == activeMove.sourceSquare.squarePosition.x &&
+                              i_requestedMove.destinationSquare.squarePosition.y == activeMove.sourceSquare.squarePosition.y)
+                         {
+                              isProgressiveMoveAvailable = true;
+                         }
                     }
                }
 
-               return isAttackMovesStillExist;
-          }
-
-          public void ExecuteComputerTurn()
-          {
-               Move executingMove = GenerateMoveRequest();
-               MakeAMoveProcess(executingMove);
-               if (executingMove.IsCaptureMove() == true)
-               {
-                    while (IsAttackMovesStillExist(executingMove))
-                    {
-                         GenerateProgressiveAttack(ref executingMove);
-                         MakeAMoveProcess(executingMove);
-                    }
-               }
-               m_activeTeam.lastMoveExecuted = executingMove;
+               return isProgressiveMoveAvailable;
           }
 
           public Move GenerateMoveRequest()
@@ -274,7 +234,10 @@ namespace B18_Ex02
                }
                else
                {
-                    generatedMove = m_activeTeam.regularMoves[randomMove.Next(0, m_activeTeam.regularMoves.Count)];
+                    if (m_activeTeam.regularMoves.Count > 0)
+                    {
+                         generatedMove = m_activeTeam.regularMoves[randomMove.Next(0, m_activeTeam.regularMoves.Count)];
+                    }
                }
 
                return generatedMove;
@@ -283,7 +246,7 @@ namespace B18_Ex02
           public void GenerateProgressiveAttack(ref Move io_executedMove)
           {
                List<Move> relevantMoves = new List<Move>();
-               foreach (Move move in io_executedMove.sourceSquare.currentMan.manTeam.attackMoves)
+               foreach (Move move in io_executedMove.destinationSquare.currentMan.manTeam.attackMoves)
                {
                     if (move.sourceSquare.squarePosition.x == io_executedMove.destinationSquare.squarePosition.x &&
                          move.sourceSquare.squarePosition.y == io_executedMove.destinationSquare.squarePosition.y)
@@ -291,30 +254,38 @@ namespace B18_Ex02
                          relevantMoves.Add(move);
                     }
                }
+
                Random randomMove = new Random();
                io_executedMove = relevantMoves[randomMove.Next(0, relevantMoves.Count)];
           }
 
           public bool IsEndOfRound()
           {
-               return m_inactiveTeam.armyOfMen.Count == 0 ||
-                    (m_inactiveTeam.attackMoves.Count + m_inactiveTeam.regularMoves.Count == 0) ||
-                    m_gameStatus == eGameStatus.roundEnd ?
-                     true : false;
-          }
+               bool isEndOfRound = false;
+               if (m_activeTeam.attackMoves.Count + m_activeTeam.regularMoves.Count == 0
+                    && m_inactiveTeam.attackMoves.Count + m_inactiveTeam.regularMoves.Count == 0)
+               {
+                    isEndOfRound = true;
+                    m_gameStatus = eGameStatus.roundEndWithDraw;
+               }
+               else if (m_activeTeam.attackMoves.Count + m_activeTeam.regularMoves.Count == 0
+                    || m_inactiveTeam.attackMoves.Count + m_inactiveTeam.regularMoves.Count == 0)
+               {
+                    isEndOfRound = true;
+                    m_gameStatus = eGameStatus.roundEnd;
+               }
 
-          public void HandleEndOfRound(Team i_winningTeam)
-          {
-               UserInterface.RunAnotherRoundDialog(i_winningTeam, ref m_gameStatus);
+               return isEndOfRound;
           }
 
           public enum eGameStatus
           {
-               inRound = 0,
+               inRound,
                startingNewRound = 1,
                gameEnd = 2,
                activeGame = 3,
-               roundEnd = 4
+               roundEnd,
+               roundEndWithDraw
           }
 
           public enum eGameMode

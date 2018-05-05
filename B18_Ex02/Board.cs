@@ -8,14 +8,12 @@ namespace B18_Ex02
 {
      public class Board
      {
-          private int m_boardSize;
           private readonly Square[,] m_actualBoard;
+          private int m_boardSize;
 
           public int boardSize
           {
                get { return m_boardSize; }
-
-
                set { m_boardSize = value; }
           }
 
@@ -70,8 +68,8 @@ namespace B18_Ex02
                for (int i = 0; i < m_boardSize; i++)
                {
                     for (int j = 0; j < m_boardSize; j++)
-                    {                     
-                        if (IsSquarePositionInBoardRange(i - 1, j - 1))
+                    {
+                         if (IsSquarePositionInBoardRange(i - 1, j - 1))
                          {
                               m_actualBoard[i, j].AssignNeighbour(m_actualBoard[i - 1, j - 1], CheckersGame.ePossibleDirections.upLeft);
                          }
@@ -83,7 +81,7 @@ namespace B18_Ex02
 
                          if (IsSquarePositionInBoardRange(i + 1, j - 1))
                          {
-                              m_actualBoard[i, j].AssignNeighbour(m_actualBoard[i + 1 , j - 1], CheckersGame.ePossibleDirections.downLeft);
+                              m_actualBoard[i, j].AssignNeighbour(m_actualBoard[i + 1, j - 1], CheckersGame.ePossibleDirections.downLeft);
                          }
 
                          if (IsSquarePositionInBoardRange(i + 1, j + 1))
@@ -96,9 +94,7 @@ namespace B18_Ex02
 
           public bool IsSquarePositionInBoardRange(int squareLine, int squareColumn)
           {
-               return (squareLine >= 0 && squareLine < m_boardSize && squareColumn >= 0 && squareColumn< m_boardSize) ? true : false;
-          }  
+               return (squareLine >= 0 && squareLine < m_boardSize && squareColumn >= 0 && squareColumn < m_boardSize) ? true : false;
+          }
      }
-
-
 }
