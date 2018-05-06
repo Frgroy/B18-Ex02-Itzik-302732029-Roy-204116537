@@ -8,65 +8,65 @@ namespace B18_Ex02
 {
      public class Man
      {
-          private const char k_upDirectionKingSign = 'K';
-          private const char k_upDirectionManSign = 'X';
-          private const char k_downDirectionKingSign = 'U';
-          private const char k_downDirectionManSign = 'O';
-          private Team m_manTeam;
-          private Square m_currentPosition;
-          private bool m_isKing;
-          private Team.eDirectionOfMovement m_manDirection;
-          private Team.eTeamSign m_manSign;
+          private const char k_UpDirectionKingSign = 'K';
+          private const char k_UpDirectionManSign = 'X';
+          private const char k_DownDirectionKingSign = 'U';
+          private const char k_DownDirectionManSign = 'O';
+          private Team m_ManTeam;
+          private Square m_CurrentPosition;
+          private bool m_IsKing;
+          private Team.eDirectionOfMovement m_ManDirection;
+          private Team.eTeamSign m_ManSign;
           
-          public bool isKing
+          public bool IsKing
           {
-               get { return m_isKing; }
-               set { m_isKing = value; }
+               get { return m_IsKing; }
+               set { m_IsKing = value; }
           }
 
-          public Team manTeam
+          public Team Team
           {
-               get { return m_manTeam; }
-               set { m_manTeam = value; }
+               get { return m_ManTeam; }
+               set { m_ManTeam = value; }
           }
 
-          public Team.eDirectionOfMovement manDirection
+          public Team.eDirectionOfMovement Direction
           {
-               get { return m_manDirection; }
-               set { m_manDirection = value; }
+               get { return m_ManDirection; }
+               set { m_ManDirection = value; }
           }
 
-          public Square currentPosition
+          public Square CurrentPosition
           {
-               get { return m_currentPosition; }
-               set { m_currentPosition = value; }
+               get { return m_CurrentPosition; }
+               set { m_CurrentPosition = value; }
           }
 
-          public char manSign
+          public char Sign
           {
                get
                {
                     char signOutput;
-                    if (m_manSign == Team.eTeamSign.X)
+                    if (m_ManSign == Team.eTeamSign.X)
                     {
-                         if (m_isKing == true)
+                         if (m_IsKing == true)
                          {
-                              signOutput = k_upDirectionKingSign;
+                              signOutput = k_UpDirectionKingSign;
                          }
                          else
                          {
-                              signOutput = k_upDirectionManSign;
+                              signOutput = k_UpDirectionManSign;
                          }
                     }
                     else
                     {
-                         if (m_isKing == true)
+                         if (m_IsKing == true)
                          {
-                              signOutput = k_downDirectionKingSign;
+                              signOutput = k_DownDirectionKingSign;
                          }
                          else
                          {
-                              signOutput = k_downDirectionManSign;
+                              signOutput = k_DownDirectionManSign;
                          }
                     }
 
@@ -76,16 +76,16 @@ namespace B18_Ex02
 
           public Man(Team i_manTeam, Square i_manPosition, Team.eDirectionOfMovement i_manDirection)
           {
-               m_manTeam = i_manTeam;
-               m_currentPosition = i_manPosition;
-               m_manDirection = i_manDirection;
-               m_manSign = i_manTeam.teamSign;
-               m_isKing = false;
+               m_ManTeam = i_manTeam;
+               m_CurrentPosition = i_manPosition;
+               m_ManDirection = i_manDirection;
+               m_ManSign = i_manTeam.Sign;
+               m_IsKing = false;
           }
 
           public void Crown()
           {
-               m_isKing = true;
+               m_IsKing = true;
           }
      }
 }

@@ -8,25 +8,25 @@ namespace B18_Ex02
 {
      public class Board
      {
-          private readonly Square[,] m_actualBoard;
-          private int m_boardSize;
+          private readonly Square[,] r_ActualBoard;
+          private int m_BoardSize;
 
-          public int boardSize
+          public int BoardSize
           {
-               get { return m_boardSize; }
-               set { m_boardSize = value; }
+               get { return m_BoardSize; }
+               set { m_BoardSize = value; }
           }
 
           public char GetSquareContent(int i_boardLine, int i_boardColumn)
           {
                char squareContent;
-               if (m_actualBoard[i_boardLine, i_boardColumn].currentMan == null)
+               if (r_ActualBoard[i_boardLine, i_boardColumn].CurrentMan == null)
                {
                     squareContent = ' ';
                }
                else
                {
-                    squareContent = m_actualBoard[i_boardLine, i_boardColumn].currentMan.manSign;
+                    squareContent = r_ActualBoard[i_boardLine, i_boardColumn].CurrentMan.Sign;
                }
 
                return squareContent;
@@ -34,18 +34,18 @@ namespace B18_Ex02
 
           public Square GetSquare(int i_boardLine, int i_boardColumn)
           {
-               return m_actualBoard[i_boardLine, i_boardColumn];
+               return r_ActualBoard[i_boardLine, i_boardColumn];
           }
 
           public Board(int i_BoardSize)
           {
-               m_boardSize = i_BoardSize;
-               m_actualBoard = new Square[m_boardSize, m_boardSize];
-               for (int i = 0; i < m_boardSize; i++)
+               m_BoardSize = i_BoardSize;
+               r_ActualBoard = new Square[m_BoardSize, m_BoardSize];
+               for (int i = 0; i < m_BoardSize; i++)
                {
-                    for (int j = 0; j < m_boardSize; j++)
+                    for (int j = 0; j < m_BoardSize; j++)
                     {
-                         m_actualBoard[i, j] = new Square(i, j);
+                         r_ActualBoard[i, j] = new Square(i, j);
                     }
                }
 
@@ -54,39 +54,39 @@ namespace B18_Ex02
 
           public void ClearBoard()
           {
-               for (int i = 0; i < m_boardSize; i++)
+               for (int i = 0; i < m_BoardSize; i++)
                {
-                    for (int j = 0; j < m_boardSize; j++)
+                    for (int j = 0; j < m_BoardSize; j++)
                     {
-                         m_actualBoard[i, j].currentMan = null;
+                         r_ActualBoard[i, j].CurrentMan = null;
                     }
                }
           }
 
           private void NeighboursAssignation()
           {
-               for (int i = 0; i < m_boardSize; i++)
+               for (int i = 0; i < m_BoardSize; i++)
                {
-                    for (int j = 0; j < m_boardSize; j++)
+                    for (int j = 0; j < m_BoardSize; j++)
                     {
                          if (IsSquarePositionInBoardRange(i - 1, j - 1))
                          {
-                              m_actualBoard[i, j].AssignNeighbour(m_actualBoard[i - 1, j - 1], CheckersGame.ePossibleDirections.upLeft);
+                              r_ActualBoard[i, j].AssignNeighbour(r_ActualBoard[i - 1, j - 1], CheckersGame.ePossibleDirections.UpLeft);
                          }
 
                          if (IsSquarePositionInBoardRange(i - 1, j + 1))
                          {
-                              m_actualBoard[i, j].AssignNeighbour(m_actualBoard[i - 1, j + 1], CheckersGame.ePossibleDirections.upRight);
+                              r_ActualBoard[i, j].AssignNeighbour(r_ActualBoard[i - 1, j + 1], CheckersGame.ePossibleDirections.UpRight);
                          }
 
                          if (IsSquarePositionInBoardRange(i + 1, j - 1))
                          {
-                              m_actualBoard[i, j].AssignNeighbour(m_actualBoard[i + 1, j - 1], CheckersGame.ePossibleDirections.downLeft);
+                              r_ActualBoard[i, j].AssignNeighbour(r_ActualBoard[i + 1, j - 1], CheckersGame.ePossibleDirections.DownLeft);
                          }
 
                          if (IsSquarePositionInBoardRange(i + 1, j + 1))
                          {
-                              m_actualBoard[i, j].AssignNeighbour(m_actualBoard[i + 1, j + 1], CheckersGame.ePossibleDirections.downRight);
+                              r_ActualBoard[i, j].AssignNeighbour(r_ActualBoard[i + 1, j + 1], CheckersGame.ePossibleDirections.DownRight);
                          }
                     }
                }
@@ -94,7 +94,7 @@ namespace B18_Ex02
 
           public bool IsSquarePositionInBoardRange(int squareLine, int squareColumn)
           {
-               return (squareLine >= 0 && squareLine < m_boardSize && squareColumn >= 0 && squareColumn < m_boardSize) ? true : false;
+               return (squareLine >= 0 && squareLine < m_BoardSize && squareColumn >= 0 && squareColumn < m_BoardSize) ? true : false;
           }
      }
 }

@@ -10,11 +10,11 @@ namespace B18_Ex02
 {
      public static class UserInterface
      {
-          private const int maximumUserNameSize = 20;
-          private const int smallBoardSize = 6;
-          private const int mediumBoardSize = 8;
-          private const int bigBoardSize = 10;
-          private const string quitRequest = "Q";
+          private const int k_MaximumUserNameSize = 20;
+          private const int k_SmallBoardSize = 6;
+          private const int k_MediumBoardSize = 8;
+          private const int k_BigBoardSize = 10;
+          private const string k_QuitRequest = "Q";
 
           public static void RunGame()
           {
@@ -29,29 +29,29 @@ namespace B18_Ex02
 
           public static void ManageGame(CheckersGame game)
           {
-               while (game.status == CheckersGame.eGameStatus.activeGame)
+               while (game.Status == CheckersGame.eGameStatus.ActiveGame)
                {
                     game.CreateNewRound();
-                    while (game.status == CheckersGame.eGameStatus.inRound)
+                    while (game.Status == CheckersGame.eGameStatus.InRound)
                     {
                          ManageRound(game);
                     }
 
-                    if (game.status == CheckersGame.eGameStatus.startingNewRound)
+                    if (game.Status == CheckersGame.eGameStatus.StartingNewRound)
                     {
-                         game.status = CheckersGame.eGameStatus.activeGame;
+                         game.Status = CheckersGame.eGameStatus.ActiveGame;
                     }
                }
           }
 
           public static void ManageRound(CheckersGame game)
           {
-               PrintGameBoard(game.board);
-               PrintMoveInfo(game.activeTeam, game.inactiveTeam);
+               PrintGameBoard(game.Board);
+               PrintMoveInfo(game.ActiveTeam, game.InactiveTeam);
                System.Threading.Thread.Sleep(300);
                game.UpdateMovesInTeams();
                Move requestedMove = new Move();
-               if (game.activeTeam.teamType == Team.eTeamType.user)
+               if (game.ActiveTeam.Type == Team.eTeamType.User)
                {
                     requestedMove = HandleUserMoveInput(game);
                }
@@ -60,17 +60,17 @@ namespace B18_Ex02
                     requestedMove = game.GenerateMoveRequest();
                }
 
-               if (game.status == CheckersGame.eGameStatus.inRound)
+               if (game.Status == CheckersGame.eGameStatus.InRound)
                {
                     game.MakeAMoveProcess(requestedMove);
-                    while (game.IsProgressiveMoveAvailable(requestedMove) && game.status == CheckersGame.eGameStatus.inRound)
+                    while (game.IsProgressiveMoveAvailable(requestedMove) && game.Status == CheckersGame.eGameStatus.InRound)
                     {
-                         PrintGameBoard(game.board);
-                         PrintMoveInfo(game.activeTeam, game.inactiveTeam);
+                         PrintGameBoard(game.Board);
+                         PrintMoveInfo(game.ActiveTeam, game.InactiveTeam);
                          System.Threading.Thread.Sleep(100);
-                         if (game.mode == CheckersGame.eGameMode.VersusAnotherPlayer)
+                         if (game.Mode == CheckersGame.eGameMode.VersusAnotherPlayer)
                          {
-                              requestedMove = HandleUserProgressiveMoveInput(requestedMove, game.status, game.activeTeam);
+                              requestedMove = HandleUserProgressiveMoveInput(requestedMove, game.Status, game.ActiveTeam);
                          }
                          else
                          {
@@ -96,16 +96,16 @@ namespace B18_Ex02
           {
                Ex02.ConsoleUtils.Screen.Clear();
                CheckersGame.eGameStatus newStatusFromUser;
-               if (game.status == CheckersGame.eGameStatus.roundEndWithDraw)
+               if (game.Status == CheckersGame.eGameStatus.RoundEndWithDraw)
                {
-                    RunAnotherRoundDialog(game.activeTeam, game.inactiveTeam, out newStatusFromUser);
+                    RunAnotherRoundDialog(game.ActiveTeam, game.InactiveTeam, out newStatusFromUser);
                }
                else
                {
-                    RunAnotherRoundDialog(game.activeTeam, out newStatusFromUser);
+                    RunAnotherRoundDialog(game.ActiveTeam, out newStatusFromUser);
                }
 
-               game.status = newStatusFromUser;
+               game.Status = newStatusFromUser;
           }
 
           public static void RunPreGameDialog(out string o_player1Name, out string o_player2Name, out int o_gameBoardSize, out CheckersGame.eGameMode o_gameMode)
@@ -149,7 +149,7 @@ namespace B18_Ex02
 
           public static bool IsLegalUserNameInserted(string i_insertedUserName)
           {
-               return Regex.IsMatch(i_insertedUserName, "^[a-z,A-Z,0-9,!-/,:-@,[-`, {-~]+$") && i_insertedUserName.Length <= maximumUserNameSize ? true : false;
+               return Regex.IsMatch(i_insertedUserName, "^[a-z,A-Z,0-9,!-/,:-@,[-`, {-~]+$") && i_insertedUserName.Length <= k_MaximumUserNameSize ? true : false;
           }
 
           public static int GetRequestedBoardSize()
@@ -173,7 +173,7 @@ namespace B18_Ex02
 
           public static bool IsLegalBoardSizeInserted(int i_insertedUserChoiseForBoardSize)
           {
-               return (i_insertedUserChoiseForBoardSize == smallBoardSize || i_insertedUserChoiseForBoardSize == mediumBoardSize || i_insertedUserChoiseForBoardSize == bigBoardSize) ? true : false;
+               return (i_insertedUserChoiseForBoardSize == k_SmallBoardSize || i_insertedUserChoiseForBoardSize == k_MediumBoardSize || i_insertedUserChoiseForBoardSize == k_BigBoardSize) ? true : false;
           }
 
           public static CheckersGame.eGameMode GetGameModeFromUser()
@@ -201,26 +201,26 @@ namespace B18_Ex02
           public static void PrintGameBoard(Board gameBoard)
           {
                Ex02.ConsoleUtils.Screen.Clear();
-               for (int i = 0; i < gameBoard.boardSize; i++)
+               for (int i = 0; i < gameBoard.BoardSize; i++)
                {
                     Console.Write("   ");
                     Console.Write((char)('A' + i));
                }
 
                Console.WriteLine("   ");
-               printGameBoardSeperator(gameBoard.boardSize);
+               printGameBoardSeperator(gameBoard.BoardSize);
 
-               for (int i = 0; i < gameBoard.boardSize; i++)
+               for (int i = 0; i < gameBoard.BoardSize; i++)
                {
                     Console.Write((char)('a' + i));
                     Console.Write('|');
-                    for (int j = 0; j < gameBoard.boardSize; j++)
+                    for (int j = 0; j < gameBoard.BoardSize; j++)
                     {
                          Console.Write(" {0} |", gameBoard.GetSquareContent(i, j));
                     }
 
                     Console.WriteLine(' ');
-                    printGameBoardSeperator(gameBoard.boardSize);
+                    printGameBoardSeperator(gameBoard.BoardSize);
                }
           }
 
@@ -237,12 +237,12 @@ namespace B18_Ex02
 
           public static void PrintMoveInfo(Team i_activeTeam, Team i_inactiveTeam)
           {
-               if (i_inactiveTeam.lastMoveExecuted != null)
+               if (i_inactiveTeam.LastMoveExecuted != null)
                {
-                    Console.WriteLine(string.Format("{0}'s move was ({1}): {2}", i_inactiveTeam.teamName, i_inactiveTeam.teamSign, i_inactiveTeam.lastMoveExecuted.ToString()));
+                    Console.WriteLine(string.Format("{0}'s move was ({1}): {2}", i_inactiveTeam.Name, i_inactiveTeam.Sign, i_inactiveTeam.LastMoveExecuted.ToString()));
                }
 
-               Console.WriteLine(string.Format("{0}'s Turn ({1}):", i_activeTeam.teamName, i_activeTeam.teamSign));
+               Console.WriteLine(string.Format("{0}'s Turn ({1}):", i_activeTeam.Name, i_activeTeam.Sign));
           }
 
           public static Move HandleUserMoveInput(CheckersGame i_game)
@@ -250,10 +250,10 @@ namespace B18_Ex02
                Move returnedMoveRequest = new Move();
                string userInput = Console.ReadLine();
 
-               while (IsLegalUserMoveInput(userInput, ref returnedMoveRequest, i_game.activeTeam) == false)
+               while (IsLegalUserMoveInput(userInput, ref returnedMoveRequest, i_game.ActiveTeam) == false)
                {
-                    PrintGameBoard(i_game.board);
-                    PrintMoveInfo(i_game.activeTeam, i_game.inactiveTeam);
+                    PrintGameBoard(i_game.Board);
+                    PrintMoveInfo(i_game.ActiveTeam, i_game.InactiveTeam);
                     PrintIllegalInputMassage();
                     userInput = Console.ReadLine();
                }
@@ -267,8 +267,8 @@ namespace B18_Ex02
                string userInput = Console.ReadLine();
 
                while (IsLegalUserMoveInput(userInput, ref returnedMoveRequest, i_activeTeam) == false ||
-                    i_previousMove.destinationSquare.squarePosition.x != returnedMoveRequest.sourceSquare.squarePosition.x ||
-                    i_previousMove.destinationSquare.squarePosition.y != returnedMoveRequest.sourceSquare.squarePosition.y)
+                    i_previousMove.DestinationSquare.Position.x != returnedMoveRequest.SourceSquare.Position.x ||
+                    i_previousMove.DestinationSquare.Position.y != returnedMoveRequest.SourceSquare.Position.y)
                {
                     PrintIllegalInputMassage();
                     userInput = Console.ReadLine();
@@ -301,7 +301,7 @@ namespace B18_Ex02
 
           public static bool IsLegalQuitRequest(string i_userInput)
           {
-               return i_userInput == quitRequest ? true : false;
+               return i_userInput == k_QuitRequest ? true : false;
           }
 
           public static bool IsLegalMoveInputFormat(string i_userInput)
@@ -325,7 +325,7 @@ namespace B18_Ex02
 
           public static void PrintWinningTeamMassage(Team i_winningTeam)
           {
-               string winningTeamMassage = string.Format(@"The winner is {0}, with {1} points!", i_winningTeam.teamName, i_winningTeam.teamScore);
+               string winningTeamMassage = string.Format(@"The winner is {0}, with {1} points!", i_winningTeam.Name, i_winningTeam.Score);
                Console.WriteLine(winningTeamMassage);
           }
 
@@ -333,10 +333,10 @@ namespace B18_Ex02
           {
                string drawMassage = string.Format(
                     @"The game ended with draw. {0} with {1} points, {2} with {3} points.",
-                    i_firstTeam.teamName,
-                    i_firstTeam.teamScore,
-                    i_secondTeam.teamName,
-                    i_secondTeam.teamScore);
+                    i_firstTeam.Name,
+                    i_firstTeam.Score,
+                    i_secondTeam.Name,
+                    i_secondTeam.Score);
           }
 
           public static CheckersGame.eGameStatus GetGameStatusFromUser()

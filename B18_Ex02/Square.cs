@@ -10,87 +10,87 @@ namespace B18_Ex02
      {
           public struct SquarePosition
           {
-               private int m_squareLine;
-               private int m_squareColumm;
+               private int m_SquareLine;
+               private int m_SquareColumm;
 
                public SquarePosition(int i_squareLine, int i_squareColumn)
                {
-                    m_squareLine = i_squareLine;
-                    m_squareColumm = i_squareColumn;
+                    m_SquareLine = i_squareLine;
+                    m_SquareColumm = i_squareColumn;
                }
 
                public int x
                {
-                    get { return m_squareColumm; }
-                    set { m_squareColumm = value; }
+                    get { return m_SquareColumm; }
+                    set { m_SquareColumm = value; }
                }
 
                public int y
                {
-                    get { return m_squareLine; }
-                    set { m_squareLine = value; }
+                    get { return m_SquareLine; }
+                    set { m_SquareLine = value; }
                }
           }
 
           public class SquareNeighbours
           {
-               private Square m_upRightSquare;
-               private Square m_upLeftSquare;
-               private Square m_downRightSquare;
-               private Square m_downLeftSquare;
+               private Square m_UpRightSquare;
+               private Square m_UpLeftSquare;
+               private Square m_DownRightSquare;
+               private Square m_DownLeftSquare;
 
-               public Square upRight
+               public Square UpRight
                {
-                    get { return m_upRightSquare; }
-                    set { m_upRightSquare = value; }
+                    get { return m_UpRightSquare; }
+                    set { m_UpRightSquare = value; }
                }
 
-               public Square upLeft
+               public Square UpLeft
                {
-                    get { return m_upLeftSquare; }
-                    set { m_upLeftSquare = value; }
+                    get { return m_UpLeftSquare; }
+                    set { m_UpLeftSquare = value; }
                }
 
-               public Square downRight
+               public Square DownRight
                {
-                    get { return m_downRightSquare; }
-                    set { m_downRightSquare = value; }
+                    get { return m_DownRightSquare; }
+                    set { m_DownRightSquare = value; }
                }
 
-               public Square downLeft
+               public Square DownLeft
                {
-                    get { return m_downLeftSquare; }
-                    set { m_downLeftSquare = value; }
+                    get { return m_DownLeftSquare; }
+                    set { m_DownLeftSquare = value; }
                }
           }
 
-          private SquarePosition m_squarePosition;
-          private Man m_currentMan;
-          private SquareNeighbours m_squareNeighbours = new SquareNeighbours();
-          private eSquareColor m_squareColor;
+          private SquarePosition m_SquarePosition;
+          private Man m_CurrentMan;
+          private SquareNeighbours m_SquareNeighbours = new SquareNeighbours();
+          private eSquareColor m_SquareColor;
 
-          public SquarePosition squarePosition
+          public SquarePosition Position
           {
-               get { return m_squarePosition; }
-               set { m_squarePosition = value; }
+               get { return m_SquarePosition; }
+               set { m_SquarePosition = value; }
           }
 
-          public eSquareColor squareColor
+          public eSquareColor SquareColor
           {
-               get { return m_squareColor; }
-               set { m_squareColor = value; }
+               get { return m_SquareColor; }
+               set { m_SquareColor = value; }
           }
 
-          public Man currentMan
+          public Man CurrentMan
           {
-               get { return m_currentMan; }
-               set { m_currentMan = value; }
+               get { return m_CurrentMan; }
+               set { m_CurrentMan = value; }
           }
 
-          public SquareNeighbours squareNeighbours
+          public SquareNeighbours Neighbours
           {
-               get { return m_squareNeighbours; }
-               set { m_squareNeighbours = value; }
+               get { return m_SquareNeighbours; }
+               set { m_SquareNeighbours = value; }
           }
 
           public Square()
@@ -99,38 +99,38 @@ namespace B18_Ex02
 
           public Square(int i_squareLine, int i_squareColumm)
           {
-               m_squarePosition = new SquarePosition(i_squareLine, i_squareColumm);
-               if ((m_squarePosition.x + m_squarePosition.y) % 2 == 0)
+               m_SquarePosition = new SquarePosition(i_squareLine, i_squareColumm);
+               if ((m_SquarePosition.x + m_SquarePosition.y) % 2 == 0)
                {
-                    m_squareColor = eSquareColor.White;
+                    m_SquareColor = eSquareColor.White;
                }
                else
                {
-                    m_squareColor = eSquareColor.Black;
+                    m_SquareColor = eSquareColor.Black;
                }
           }
 
           public void AssignNeighbour(Square i_neighbourSquare, CheckersGame.ePossibleDirections i_squareDirection)
           {
-               if (i_squareDirection == CheckersGame.ePossibleDirections.upLeft)
+               if (i_squareDirection == CheckersGame.ePossibleDirections.UpLeft)
                {
-                    m_squareNeighbours.upLeft = new Square();
-                    m_squareNeighbours.upLeft = i_neighbourSquare;
+                    m_SquareNeighbours.UpLeft = new Square();
+                    m_SquareNeighbours.UpLeft = i_neighbourSquare;
                }
-               else if (i_squareDirection == CheckersGame.ePossibleDirections.upRight)
+               else if (i_squareDirection == CheckersGame.ePossibleDirections.UpRight)
                {
-                    m_squareNeighbours.upRight = new Square();
-                    m_squareNeighbours.upRight = i_neighbourSquare;
+                    m_SquareNeighbours.UpRight = new Square();
+                    m_SquareNeighbours.UpRight = i_neighbourSquare;
                }
-               else if (i_squareDirection == CheckersGame.ePossibleDirections.downLeft)
+               else if (i_squareDirection == CheckersGame.ePossibleDirections.DownLeft)
                {
-                    m_squareNeighbours.downLeft = new Square();
-                    m_squareNeighbours.downLeft = i_neighbourSquare;
+                    m_SquareNeighbours.DownLeft = new Square();
+                    m_SquareNeighbours.DownLeft = i_neighbourSquare;
                }
                else
                {
-                    m_squareNeighbours.downRight = new Square();
-                    m_squareNeighbours.downRight = i_neighbourSquare;
+                    m_SquareNeighbours.DownRight = new Square();
+                    m_SquareNeighbours.DownRight = i_neighbourSquare;
                }
           }
 

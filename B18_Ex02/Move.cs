@@ -8,68 +8,68 @@ namespace B18_Ex02
 {
      public class Move
      {
-          private Square m_sourceSquare;
-          private Square m_capturedSquare;
-          private Square m_destinationSquare;
-          private eMoveOption m_moveOption;
+          private Square m_SourceSquare;
+          private Square m_CapturedSquare;
+          private Square m_DestinationSquare;
+          private eMoveOption m_MoveOption;
 
-          public eMoveOption moveOption
+          public eMoveOption MoveOption
           {
-               get { return m_moveOption; }
-               set { m_moveOption = value; }
+               get { return m_MoveOption; }
+               set { m_MoveOption = value; }
           }
 
           public Move()
           {
-               m_sourceSquare = new Square();
-               m_destinationSquare = new Square();
+               m_SourceSquare = new Square();
+               m_DestinationSquare = new Square();
           }
 
           public Move(Square i_sourceSquare, Square i_destinationSquare)
           {
-               m_sourceSquare = i_sourceSquare;
-               m_destinationSquare = i_destinationSquare;
-               m_moveOption = eMoveOption.move;
+               m_SourceSquare = i_sourceSquare;
+               m_DestinationSquare = i_destinationSquare;
+               m_MoveOption = eMoveOption.Move;
           }
 
           public Move(Square i_sourceSquare, Square i_capturedSquare, Square i_destinationSquare, eMoveOption i_moveOption)
           {
-               m_sourceSquare = i_sourceSquare;
-               m_capturedSquare = i_capturedSquare;
-               m_destinationSquare = i_destinationSquare;
-               m_moveOption = i_moveOption;
+               m_SourceSquare = i_sourceSquare;
+               m_CapturedSquare = i_capturedSquare;
+               m_DestinationSquare = i_destinationSquare;
+               m_MoveOption = i_moveOption;
           }
 
           public Move(eMoveOption i_moveOption)
           {
-               m_moveOption = i_moveOption;
+               m_MoveOption = i_moveOption;
           }
 
-          public Square sourceSquare
+          public Square SourceSquare
           {
-               get { return m_sourceSquare; }
-               set { m_sourceSquare = value; }
+               get { return m_SourceSquare; }
+               set { m_SourceSquare = value; }
           }
 
-          public Square capturedSquare
+          public Square CapturedSquare
           {
-               get { return m_capturedSquare; }
-               set { m_capturedSquare = value; }
+               get { return m_CapturedSquare; }
+               set { m_CapturedSquare = value; }
           }
 
-          public Square destinationSquare
+          public Square DestinationSquare
           {
-               get { return m_destinationSquare; }
-               set { m_destinationSquare = value; }
+               get { return m_DestinationSquare; }
+               set { m_DestinationSquare = value; }
           }
 
           public new string ToString()
           {
                const string seperatorInMoveString = ">";
-               char sourceLengthLetter = (char)(m_sourceSquare.squarePosition.x + (int)'A');
-               char sourceWidthLetter = (char)(m_sourceSquare.squarePosition.y + (int)'a');
-               char destinationLengthLetter = (char)(m_destinationSquare.squarePosition.x + (int)'A');
-               char destinationWidthLetter = (char)(m_destinationSquare.squarePosition.y + (int)'a');
+               char sourceLengthLetter = (char)(m_SourceSquare.Position.x + (int)'A');
+               char sourceWidthLetter = (char)(m_SourceSquare.Position.y + (int)'a');
+               char destinationLengthLetter = (char)(m_DestinationSquare.Position.x + (int)'A');
+               char destinationWidthLetter = (char)(m_DestinationSquare.Position.y + (int)'a');
                string stringOfMove = string.Format(
                     "{1}{2}{0}{3}{4}",
                     seperatorInMoveString,
@@ -95,27 +95,27 @@ namespace B18_Ex02
                Square destinationSquare = new Square((int)splittedInput[1][1] - 'a', (int)splittedInput[1][0] - 'A');
                Move requestedPlayerMove = new Move(sourceSquare, destinationSquare);
 
-               foreach (Move attackMove in i_activeTeam.attackMoves)
+               foreach (Move attackMove in i_activeTeam.AttackMoves)
                {
-                    if (attackMove.sourceSquare.squarePosition.x == sourceSquare.squarePosition.x &&
-                         attackMove.sourceSquare.squarePosition.y == sourceSquare.squarePosition.y &&
-                         attackMove.destinationSquare.squarePosition.x == destinationSquare.squarePosition.x &&
-                         attackMove.destinationSquare.squarePosition.y == destinationSquare.squarePosition.y)
+                    if (attackMove.SourceSquare.Position.x == sourceSquare.Position.x &&
+                         attackMove.SourceSquare.Position.y == sourceSquare.Position.y &&
+                         attackMove.DestinationSquare.Position.x == destinationSquare.Position.x &&
+                         attackMove.DestinationSquare.Position.y == destinationSquare.Position.y)
                     {
                          requestedPlayerMove = attackMove;
-                         requestedPlayerMove.moveOption = eMoveOption.attackMove;
+                         requestedPlayerMove.MoveOption = eMoveOption.Attack;
                     }
                }
 
-               foreach (Move regularMove in i_activeTeam.regularMoves)
+               foreach (Move regularMove in i_activeTeam.RegularMoves)
                {
-                    if (regularMove.sourceSquare.squarePosition.y == sourceSquare.squarePosition.x &&
-                         regularMove.sourceSquare.squarePosition.y == sourceSquare.squarePosition.y &&
-                         regularMove.destinationSquare.squarePosition.x == destinationSquare.squarePosition.x &&
-                         regularMove.destinationSquare.squarePosition.y == destinationSquare.squarePosition.y)
+                    if (regularMove.SourceSquare.Position.y == sourceSquare.Position.x &&
+                         regularMove.SourceSquare.Position.y == sourceSquare.Position.y &&
+                         regularMove.DestinationSquare.Position.x == destinationSquare.Position.x &&
+                         regularMove.DestinationSquare.Position.y == destinationSquare.Position.y)
                     {
                          requestedPlayerMove = regularMove;
-                         requestedPlayerMove.moveOption = eMoveOption.move;
+                         requestedPlayerMove.MoveOption = eMoveOption.Move;
                     }
                }
 
@@ -139,7 +139,7 @@ namespace B18_Ex02
                bool canConvertInputToMove = false;
                if (i_activeTeam.IsTeamCanQuit())
                {
-                    i_requestedMove = i_requestedMove.Parse(Move.eMoveOption.quit);
+                    i_requestedMove = i_requestedMove.Parse(Move.eMoveOption.Quit);
                     canConvertInputToMove = true;
                }
 
@@ -151,7 +151,7 @@ namespace B18_Ex02
                bool isLegalMove = false;
 
                isLegalMove = IsAttackMove(i_userRequestForMove, i_activeTeam);
-               if (isLegalMove == false && i_activeTeam.attackMoves.Count == 0)
+               if (isLegalMove == false && i_activeTeam.AttackMoves.Count == 0)
                {
                     isLegalMove = CheckRegularMoves(ref i_userRequestForMove, i_activeTeam);
                }
@@ -162,7 +162,7 @@ namespace B18_Ex02
           public bool IsAttackMove(Move io_userRequestForMove, Team i_activeTeam)
           {
                bool isLegalAttackMove = false;
-               foreach (Move availableMove in i_activeTeam.attackMoves)
+               foreach (Move availableMove in i_activeTeam.AttackMoves)
                {
                     if (IsMoveMatchToMoveInMovesList(ref io_userRequestForMove, availableMove))
                     {
@@ -176,7 +176,7 @@ namespace B18_Ex02
           public bool CheckRegularMoves(ref Move io_userRequestForMove, Team i_activeTeam)
           {
                bool isLegalRegularMove = false;
-               foreach (Move availableMove in i_activeTeam.regularMoves)
+               foreach (Move availableMove in i_activeTeam.RegularMoves)
                {
                     if (IsMoveMatchToMoveInMovesList(ref io_userRequestForMove, availableMove))
                     {
@@ -190,10 +190,10 @@ namespace B18_Ex02
           public bool IsMoveMatchToMoveInMovesList(ref Move i_userRequestForMove, Move i_availableMove)
           {
                bool isMoveMatchToMoveInMovesList = false;
-               if (i_availableMove.m_destinationSquare.squarePosition.x == i_userRequestForMove.m_destinationSquare.squarePosition.x &&
-                    i_availableMove.m_destinationSquare.squarePosition.y == i_userRequestForMove.m_destinationSquare.squarePosition.y &&
-                    i_availableMove.m_sourceSquare.squarePosition.x == i_userRequestForMove.m_sourceSquare.squarePosition.x &&
-                   i_availableMove.m_sourceSquare.squarePosition.y == i_userRequestForMove.m_sourceSquare.squarePosition.y)
+               if (i_availableMove.m_DestinationSquare.Position.x == i_userRequestForMove.m_DestinationSquare.Position.x &&
+                    i_availableMove.m_DestinationSquare.Position.y == i_userRequestForMove.m_DestinationSquare.Position.y &&
+                    i_availableMove.m_SourceSquare.Position.x == i_userRequestForMove.m_SourceSquare.Position.x &&
+                   i_availableMove.m_SourceSquare.Position.y == i_userRequestForMove.m_SourceSquare.Position.y)
                {
                     i_userRequestForMove = i_availableMove;
                     isMoveMatchToMoveInMovesList = true;
@@ -204,21 +204,21 @@ namespace B18_Ex02
 
           public void ExecuteMove()
           {
-               m_destinationSquare.currentMan = m_sourceSquare.currentMan;
-               m_sourceSquare.currentMan.currentPosition = m_destinationSquare;
-               m_sourceSquare.currentMan = null;
-               if (m_moveOption == eMoveOption.attackMove)
+               m_DestinationSquare.CurrentMan = m_SourceSquare.CurrentMan;
+               m_SourceSquare.CurrentMan.CurrentPosition = m_DestinationSquare;
+               m_SourceSquare.CurrentMan = null;
+               if (m_MoveOption == eMoveOption.Attack)
                {
-                    m_capturedSquare.currentMan.manTeam.armyOfMen.Remove(m_capturedSquare.currentMan);
-                    m_capturedSquare.currentMan = null;
+                    m_CapturedSquare.CurrentMan.Team.ArmyOfMen.Remove(m_CapturedSquare.CurrentMan);
+                    m_CapturedSquare.CurrentMan = null;
                }
           }
 
           public enum eMoveOption
           {
-               quit,
-               move,
-               attackMove,
+               Quit,
+               Move,
+               Attack,
           }
      }
 }
