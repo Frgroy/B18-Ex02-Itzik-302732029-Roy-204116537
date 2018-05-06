@@ -81,10 +81,13 @@ namespace B18_Ex02
                     }
                }
 
-               game.SwapActiveTeam();
                if (game.IsEndOfRound())
                {
                     HandleEndOfRound(game);
+               }
+               else
+               {
+                    game.SwapActiveTeam();
                }
           }
 

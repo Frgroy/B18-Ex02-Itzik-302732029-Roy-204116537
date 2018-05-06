@@ -147,6 +147,7 @@ namespace B18_Ex02
                     m_activeTeam.lastMoveExecuted = i_executingMove;
                     CrownNewKings();
                     UpdateLeaderTeam();
+                    UpdateMovesInTeams();
                }
 
                if (IsEndOfRound())
@@ -207,7 +208,6 @@ namespace B18_Ex02
 
           public bool IsProgressiveMoveAvailable(Move i_requestedMove)
           {
-               UpdateMovesInTeams();
                bool isProgressiveMoveAvailable = false;
                if (i_requestedMove.moveOption == Move.eMoveOption.attackMove)
                {
