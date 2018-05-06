@@ -51,7 +51,7 @@ namespace B18_Ex02
                System.Threading.Thread.Sleep(300);
                game.UpdateMovesInTeams();
                Move requestedMove = new Move();
-               if (game.mode == CheckersGame.eGameMode.VersusAnotherPlayer)
+               if (game.activeTeam.teamType == Team.eTeamType.user)
                {
                     requestedMove = HandleUserMoveInput(game);
                }
@@ -83,6 +83,7 @@ namespace B18_Ex02
 
                if (game.IsEndOfRound())
                {
+                    System.Threading.Thread.Sleep(100);
                     HandleEndOfRound(game);
                }
                else
@@ -125,7 +126,7 @@ namespace B18_Ex02
 
           public static void PrintIntroduction()
           {
-               Console.WriteLine("Hello! Let's play CHECKERS!!! Have fun :-)");
+               Console.WriteLine("Hello, Let's play Checkers!");
           }
 
           public static void PrintIllegalInputMassage()
